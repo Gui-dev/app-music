@@ -16,7 +16,7 @@
 - v Define domain entities (`Music`, `Playlist`)
 - v Create repository contracts (`IMusicRepository`, `IPlaylistRepository`)
 - v Implement `MusicRepository` with SQLite
-- x Implement `PlaylistRepository` with SQLite
+- v Implement `PlaylistRepository` with SQLite
 - x Create in-memory repositories for testing
 - x Create use cases: `ListMusics`
 - x Create use cases: `StreamMusic` (HTTP Range support)
