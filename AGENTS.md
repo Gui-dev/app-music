@@ -15,7 +15,7 @@ Music Streaming App — Aplicativo Android de streaming de música pessoal. Aces
 
 ### Backend (`apps/server/`)
 - **Fastify** — Servidor HTTP
-- **@fastify/zod** — Validação de schemas no backend
+- **@fastify/type-provider-zod** — Validação de schemas no backend
 - **Drizzle ORM + better-sqlite3** — ORM e banco SQLite
 - **music-metadata** — Ler tags ID3 dos MP3s
 - **vitest + supertest** — Testes unitários/integration
