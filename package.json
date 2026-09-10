@@ -1,15 +1,15 @@
 {
-  "name": "app-music",
-  "private": true,
-  "scripts": {
-    "lint": "biome lint",
-    "format": "biome format --write",
-    "check": "biome check --write",
-    "test": "pnpm --filter server test && pnpm --filter mobile test",
-    "typecheck": "pnpm --filter server typecheck && pnpm --filter mobile typecheck"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.5.0",
-    "typescript": "^5.7.0"
-  }
+	"name": "app-music",
+	"private": true,
+	"scripts": {
+		"lint": "biome lint",
+		"format": "biome format --write",
+		"check": "biome check --write",
+		"test": "pnpm --filter server test && pnpm --filter mobile test",
+		"typecheck": "pnpm --filter server typecheck && pnpm --filter mobile typecheck"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.0",
+		"typescript": "^5.7.0"
+	}
 }

@@ -1,19 +1,19 @@
 {
-  "name": "@app-music/shared",
-  "version": "1.0.0",
-  "private": true,
-  "main": "src/index.ts",
-  "scripts": {
-    "build": "tsc",
-    "typecheck": "tsc --noEmit",
-    "lint": "biome lint src/",
-    "format": "biome format --write src/"
-  },
-  "dependencies": {
-    "zod": "^3.24.0"
-  },
-  "devDependencies": {
-    "typescript": "^5.7.0",
-    "@biomejs/biome": "^2.5.0"
-  }
+	"name": "@app-music/shared",
+	"version": "1.0.0",
+	"private": true,
+	"main": "src/index.ts",
+	"scripts": {
+		"build": "tsc",
+		"typecheck": "tsc --noEmit",
+		"lint": "biome lint src/",
+		"format": "biome format --write src/"
+	},
+	"dependencies": {
+		"zod": "^3.24.0"
+	},
+	"devDependencies": {
+		"typescript": "^5.7.0",
+		"@biomejs/biome": "^2.5.0"
+	}
 }
