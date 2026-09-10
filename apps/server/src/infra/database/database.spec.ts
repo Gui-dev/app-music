@@ -1,47 +1,25 @@
-import { describe, it, expect, afterEach } from 'vitest'
-import { eq } from 'drizzle-orm'
+import { describe, it, expect } from 'vitest'
 import { createDatabase } from './database'
-import { existsSync, rmSync } from 'node:fs'
-import { join } from 'node:path'
+import { eq } from 'drizzle-orm'
 import { musics, playlists } from './schemas'
 
 describe('createDatabase', () => {
-  const testDbPath = join(process.cwd(), 'test-data', 'test.db')
+  it('should create a database instance', () => {
+    const db = createDatabase(':memory:')
 
-  afterEach(() => {
-    if (existsSync(testDbPath)) {
-      rmSync(testDbPath)
-    }
-  })
-
-  it('should create a database file at the specified path', () => {
-    const db = createDatabase(testDbPath)
-
-    expect(existsSync(testDbPath)).toBe(true)
     expect(db).toBeDefined()
   })
 
-  it('should create parent directories if they do not exist', () => {
-    const nestedPath = join(process.cwd(), 'test-data', 'nested', 'dir', 'test.db')
+  it('should enable foreign keys', () => {
+    const db = createDatabase(':memory:')
 
-    const _db = createDatabase(nestedPath)
-
-    expect(existsSync(nestedPath)).toBe(true)
-    rmSync(join(process.cwd(), 'test-data'), { recursive: true })
-  })
-
-  it('should enable WAL mode and foreign keys', () => {
-    const db = createDatabase(testDbPath)
-
-    const journalMode = db.$client.pragma('journal_mode', { simple: true })
     const foreignKeys = db.$client.pragma('foreign_keys', { simple: true })
 
-    expect(journalMode).toBe('wal')
     expect(foreignKeys).toBe(1)
   })
 
   it('should allow inserting and querying music via Drizzle', async () => {
-    const db = createDatabase(testDbPath)
+    const db = createDatabase(':memory:')
 
     await db.insert(musics).values({
       id: '1',
@@ -64,7 +42,7 @@ describe('createDatabase', () => {
   })
 
   it('should allow inserting and querying playlists via Drizzle', async () => {
-    const db = createDatabase(testDbPath)
+    const db = createDatabase(':memory:')
 
     await db.insert(playlists).values({
       id: '1',

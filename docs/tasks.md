@@ -15,7 +15,7 @@
 - v Create database schema (musics, playlists, playlist_musics, cover_cache)
 - v Define domain entities (`Music`, `Playlist`)
 - v Create repository contracts (`IMusicRepository`, `IPlaylistRepository`)
-- x Implement `MusicRepository` with SQLite
+- v Implement `MusicRepository` with SQLite
 - x Implement `PlaylistRepository` with SQLite
 - x Create in-memory repositories for testing
 - x Create use cases: `ListMusics`
