@@ -1,4 +1,4 @@
-import type { Playlist } from '../entities'
+import type { Playlist } from '../../entities'
 
 export interface IPlaylistRepository {
   findAll(): Promise<Playlist[]>

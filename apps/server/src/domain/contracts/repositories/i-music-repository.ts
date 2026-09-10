@@ -1,4 +1,4 @@
-import type { Music } from '../entities'
+import type { Music } from '../../entities'
 
 export interface IMusicRepository {
   findAll(): Promise<Music[]>
