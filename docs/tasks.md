@@ -14,7 +14,7 @@
 - v Set up SQLite database with `better-sqlite3`
 - v Create database schema (musics, playlists, playlist_musics, cover_cache)
 - v Define domain entities (`Music`, `Playlist`)
-- x Create repository contracts (`IMusicRepository`, `IPlaylistRepository`)
+- v Create repository contracts (`IMusicRepository`, `IPlaylistRepository`)
 - x Implement `MusicRepository` with SQLite
 - x Implement `PlaylistRepository` with SQLite
 - x Create in-memory repositories for testing
