@@ -1,8 +1,10 @@
-import Database from 'better-sqlite3'
+import { drizzle } from 'drizzle-orm/better-sqlite3'
+import SqliteDatabase from 'better-sqlite3'
 import { existsSync, mkdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
+import * as schema from './schemas'
 
-export function createDatabase(dbPath?: string): Database.Database {
+export function createDatabase(dbPath?: string) {
   const resolvedPath = dbPath ?? join(process.cwd(), 'data', 'music.db')
 
   const dir = dirname(resolvedPath)
@@ -10,18 +12,12 @@ export function createDatabase(dbPath?: string): Database.Database {
     mkdirSync(dir, { recursive: true })
   }
 
-  const db = new Database(resolvedPath)
+  const sqlite = new SqliteDatabase(resolvedPath)
 
-  db.pragma('journal_mode = WAL')
-  db.pragma('foreign_keys = ON')
+  sqlite.pragma('journal_mode = WAL')
+  sqlite.pragma('foreign_keys = ON')
 
-  initializeSchema(db)
-
-  return db
-}
-
-function initializeSchema(db: Database.Database): void {
-  db.exec(`
+  sqlite.exec(`
     CREATE TABLE IF NOT EXISTS musics (
       id TEXT PRIMARY KEY,
       title TEXT NOT NULL,
@@ -57,4 +53,10 @@ function initializeSchema(db: Database.Database): void {
       PRIMARY KEY (artist, album)
     );
   `)
+
+  const db = drizzle(sqlite, { schema })
+
+  return db
 }
+
+export type AppDatabase = ReturnType<typeof createDatabase>
