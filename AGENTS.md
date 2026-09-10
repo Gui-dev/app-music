@@ -16,7 +16,7 @@ Music Streaming App — Aplicativo Android de streaming de música pessoal. Aces
 ### Backend (`apps/server/`)
 - **Fastify** — Servidor HTTP
 - **@fastify/zod** — Validação de schemas no backend
-- **better-sqlite3** — Banco SQLite
+- **Drizzle ORM + better-sqlite3** — ORM e banco SQLite
 - **music-metadata** — Ler tags ID3 dos MP3s
 - **vitest + supertest** — Testes unitários/integration
 - **tsx** — Execução TypeScript
@@ -96,3 +96,4 @@ Conventional Commits (English), following `docs/skills/COMMITS_GUIDELINE.md`:
 5. **Testes co-localizados** com arquivos de fonte (`.spec.ts`, `.spec.tsx`)
 6. **Commits em inglês** seguindo Conventional Commits
 7. **Domínio** como prioridade: lógica de negócio em use cases, persistência repositórios
+8. **kebab-case** para nomenclatura de arquivos (ex: `nome-do-arquivo.ts`, `database.ts`)
