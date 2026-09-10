@@ -11,7 +11,7 @@
 ## Backend
 
 - v Initialize Fastify server with `fastify-zod` provider
-- x Set up SQLite database with `better-sqlite3`
+- v Set up SQLite database with `better-sqlite3`
 - x Create database schema (musics, playlists, playlist_musics, cover_cache)
 - x Define domain entities (`Music`, `Playlist`)
 - x Create repository contracts (`IMusicRepository`, `IPlaylistRepository`)
