@@ -18,7 +18,7 @@
 - v Implement `MusicRepository` with SQLite
 - v Implement `PlaylistRepository` with SQLite
 - v Create in-memory repositories for testing
-- x Create use cases: `ListMusics`
+- v Create use cases: `ListMusics`
 - x Create use cases: `StreamMusic` (HTTP Range support)
 - x Create use cases: `SearchMusics`
 - x Create use cases: `CreatePlaylist`
