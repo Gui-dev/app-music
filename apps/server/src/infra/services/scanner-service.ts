@@ -1,0 +1,62 @@
+import { readdir } from 'node:fs/promises'
+import { extname, join } from 'node:path'
+import { parseFile } from 'music-metadata'
+import type { IScannerService } from '@/domain/contracts/services/i-scanner-service'
+import type { Music } from '@/domain/entities'
+
+const AUDIO_EXTENSIONS = ['.mp3', '.flac', '.wav', '.m4a', '.ogg', '.aac']
+
+export class ScannerService implements IScannerService {
+	async scanDirectory(rootPath: string): Promise<Music[]> {
+		const musics: Music[] = []
+		await this.scanRecursive(rootPath, musics)
+		return musics
+	}
+
+	private async scanRecursive(dirPath: string, musics: Music[]): Promise<void> {
+		const entries = await readdir(dirPath, { withFileTypes: true })
+
+		for (const entry of entries) {
+			const fullPath = join(dirPath, entry.name)
+
+			if (entry.isDirectory()) {
+				await this.scanRecursive(fullPath, musics)
+				continue
+			}
+
+			if (entry.isFile() && this.isAudioFile(entry.name)) {
+				const music = await this.parseAudioFile(fullPath)
+				if (music) {
+					musics.push(music)
+				}
+			}
+		}
+	}
+
+	private isAudioFile(filename: string): boolean {
+		const ext = extname(filename).toLowerCase()
+		return AUDIO_EXTENSIONS.includes(ext)
+	}
+
+	private async parseAudioFile(filePath: string): Promise<Music | null> {
+		try {
+			const metadata = await parseFile(filePath)
+			const common = metadata.common
+			const format = metadata.format
+
+			return {
+				id: crypto.randomUUID(),
+				title: common.title || 'Unknown Title',
+				artist: common.artist || 'Unknown Artist',
+				album: common.album || 'Unknown Album',
+				duration: format.duration || 0,
+				filePath,
+				coverUrl: null,
+				trackNumber: common.track?.no || null,
+				year: common.year || null,
+			}
+		} catch {
+			return null
+		}
+	}
+}
