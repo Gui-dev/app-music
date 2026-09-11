@@ -5,14 +5,14 @@ import { drizzle } from 'drizzle-orm/better-sqlite3'
 import * as schema from './schemas'
 
 export function createDatabase(dbPath?: string) {
-  const resolvedPath = dbPath ?? join(process.cwd(), 'data', 'music.db')
+	const resolvedPath = dbPath ?? join(process.cwd(), 'data', 'music.db')
 
-  if (resolvedPath !== ':memory:') {
-    const dir = dirname(resolvedPath)
-    if (!existsSync(dir)) {
-      mkdirSync(dir, { recursive: true })
-    }
-  }
+	if (resolvedPath !== ':memory:') {
+		const dir = dirname(resolvedPath)
+		if (!existsSync(dir)) {
+			mkdirSync(dir, { recursive: true })
+		}
+	}
 
 	const sqlite = new SqliteDatabase(resolvedPath)
 

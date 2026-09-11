@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { Music } from '../../domain/entities'
+import type { Music } from '@/domain/entities'
 import { createDatabase } from '../database/database'
 import { MusicRepository } from './music-repository'
 

@@ -1,5 +1,5 @@
-import type { Music } from '../../../domain/entities'
-import type { IMusicRepository } from '../../../domain/contracts'
+import type { IMusicRepository } from '@/domain/contracts'
+import type { Music } from '@/domain/entities'
 
 export class InMemoryMusicRepository implements IMusicRepository {
 	private musics: Music[] = []

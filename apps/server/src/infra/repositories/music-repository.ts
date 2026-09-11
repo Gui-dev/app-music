@@ -1,6 +1,6 @@
 import { eq, like, or } from 'drizzle-orm'
-import type { IMusicRepository } from '../../domain/contracts'
-import type { Music } from '../../domain/entities'
+import type { IMusicRepository } from '@/domain/contracts'
+import type { Music } from '@/domain/entities'
 import type { AppDatabase } from '../database/database'
 import { musics } from '../database/schemas'
 

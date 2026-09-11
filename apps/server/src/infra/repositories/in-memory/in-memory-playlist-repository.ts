@@ -1,5 +1,5 @@
-import type { Playlist } from '../../../domain/entities'
-import type { IPlaylistRepository } from '../../../domain/contracts'
+import type { IPlaylistRepository } from '@/domain/contracts'
+import type { Playlist } from '@/domain/entities'
 
 export class InMemoryPlaylistRepository implements IPlaylistRepository {
 	private playlists: Playlist[] = []

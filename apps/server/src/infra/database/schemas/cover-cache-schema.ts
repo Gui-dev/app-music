@@ -1,4 +1,4 @@
-import { sqliteTable, text, primaryKey } from 'drizzle-orm/sqlite-core'
+import { primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 export const coverCache = sqliteTable(
 	'cover_cache',
