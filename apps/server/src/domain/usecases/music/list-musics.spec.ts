@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { InMemoryMusicRepository } from '@/infra/repositories/in-memory/in-memory-music-repository'
 import type { Music } from '@/domain/entities'
+import { InMemoryMusicRepository } from '@/infra/repositories/in-memory/in-memory-music-repository'
 import { ListMusics } from './list-musics'
 
 describe('ListMusics', () => {

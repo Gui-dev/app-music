@@ -2,13 +2,13 @@ import { resolve } from 'node:path'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
-  resolve: {
-    alias: {
-      '@shared': resolve(__dirname, '../../shared/src'),
-      '@': resolve(__dirname, './src'),
-    },
-  },
-  test: {
-    globals: true,
-  },
+	resolve: {
+		alias: {
+			'@shared': resolve(__dirname, '../../shared/src'),
+			'@': resolve(__dirname, './src'),
+		},
+	},
+	test: {
+		globals: true,
+	},
 })
