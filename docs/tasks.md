@@ -20,7 +20,7 @@
 - v Create in-memory repositories for testing
 - v Create use cases: `ListMusics`
 - v Create use cases: `StreamMusic` (HTTP Range support)
-- x Create use cases: `SearchMusics`
+- v Create use cases: `SearchMusics`
 - x Create use cases: `CreatePlaylist`
 - x Create use cases: `AddMusicToPlaylist`
 - x Create use cases: `ListPlaylists`
