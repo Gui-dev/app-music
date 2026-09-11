@@ -23,7 +23,7 @@
 - v Create use cases: `SearchMusics`
 - v Create use cases: `CreatePlaylist`
 - v Create use cases: `AddMusicToPlaylist`
-- x Create use cases: `ListPlaylists`
+- v Create use cases: `ListPlaylists`
 - x Create use cases: `RemoveMusicFromPlaylist`
 - x Implement `ScannerService` (music-metadata for ID3 tags)
 - x Implement `CoverService` (Last.fm API integration)
