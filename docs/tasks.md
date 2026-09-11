@@ -17,7 +17,7 @@
 - v Create repository contracts (`IMusicRepository`, `IPlaylistRepository`)
 - v Implement `MusicRepository` with SQLite
 - v Implement `PlaylistRepository` with SQLite
-- x Create in-memory repositories for testing
+- v Create in-memory repositories for testing
 - x Create use cases: `ListMusics`
 - x Create use cases: `StreamMusic` (HTTP Range support)
 - x Create use cases: `SearchMusics`
