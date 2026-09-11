@@ -26,7 +26,7 @@
 - v Create use cases: `ListPlaylists`
 - v Create use cases: `RemoveMusicFromPlaylist`
 - v Implement `ScannerService` (music-metadata for ID3 tags)
-- x Implement `CoverService` (Last.fm API integration)
+- v Implement `CoverService` (Last.fm API integration)
 - x Create API routes: `/music`, `/music/:id`, `/stream/:id`, `/cover/:id`, `/search`
 - x Create API routes: `/playlists`, `/playlists/:id/add`, `/playlists/:id/remove/:musicId`
 - x Create API route: `/scan`
