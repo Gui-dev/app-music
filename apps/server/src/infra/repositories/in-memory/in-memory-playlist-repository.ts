@@ -12,6 +12,10 @@ export class InMemoryPlaylistRepository implements IPlaylistRepository {
 		return this.playlists.find((p) => p.id === id) ?? null
 	}
 
+	async findByName(name: string): Promise<Playlist | null> {
+		return this.playlists.find((p) => p.name === name) ?? null
+	}
+
 	async create(name: string): Promise<Playlist> {
 		const playlist: Playlist = {
 			id: crypto.randomUUID(),
@@ -22,6 +26,14 @@ export class InMemoryPlaylistRepository implements IPlaylistRepository {
 		}
 
 		this.playlists.push(playlist)
+		return playlist
+	}
+
+	async update(playlist: Playlist): Promise<Playlist> {
+		const index = this.playlists.findIndex((p) => p.id === playlist.id)
+		if (index !== -1) {
+			this.playlists[index] = playlist
+		}
 		return playlist
 	}
 

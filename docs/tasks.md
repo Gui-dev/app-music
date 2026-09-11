@@ -21,7 +21,7 @@
 - v Create use cases: `ListMusics`
 - v Create use cases: `StreamMusic` (HTTP Range support)
 - v Create use cases: `SearchMusics`
-- x Create use cases: `CreatePlaylist`
+- v Create use cases: `CreatePlaylist`
 - x Create use cases: `AddMusicToPlaylist`
 - x Create use cases: `ListPlaylists`
 - x Create use cases: `RemoveMusicFromPlaylist`

@@ -32,6 +32,28 @@ export class PlaylistRepository implements IPlaylistRepository {
 		return this.toDomain(rows[0], musicIds)
 	}
 
+	async findByName(name: string): Promise<Playlist | null> {
+		const rows = await this.db
+			.select()
+			.from(playlists)
+			.where(eq(playlists.name, name))
+			.limit(1)
+
+		if (!rows[0]) return null
+
+		const musicIds = await this.getMusicIds(rows[0].id)
+		return this.toDomain(rows[0], musicIds)
+	}
+
+	async update(playlist: Playlist): Promise<Playlist> {
+		await this.db
+			.update(playlists)
+			.set({ name: playlist.name, updatedAt: new Date().toISOString() })
+			.where(eq(playlists.id, playlist.id))
+
+		return playlist
+	}
+
 	async create(name: string): Promise<Playlist> {
 		const id = crypto.randomUUID()
 
