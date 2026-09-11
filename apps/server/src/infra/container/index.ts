@@ -8,6 +8,7 @@ import { RemoveMusicFromPlaylist } from '@/domain/usecases/playlist/remove-music
 import { type AppDatabase, createDatabase } from '../database/database'
 import { MusicRepository } from '../repositories/music-repository'
 import { PlaylistRepository } from '../repositories/playlist-repository'
+import { CoverService } from '../services/cover-service'
 import { LocalFileStorage } from '../services/local-file-storage'
 
 export interface Container {
@@ -15,6 +16,7 @@ export interface Container {
 	musicRepository: MusicRepository
 	playlistRepository: PlaylistRepository
 	fileStorage: LocalFileStorage
+	coverService: CoverService
 	listMusics: ListMusics
 	streamMusic: StreamMusic
 	searchMusics: SearchMusics
@@ -30,6 +32,7 @@ export function createContainer(): Container {
 	const musicRepository = new MusicRepository(db)
 	const playlistRepository = new PlaylistRepository(db)
 	const fileStorage = new LocalFileStorage(process.env.MUSIC_PATH || '/music')
+	const coverService = new CoverService(process.env.LASTFM_API_KEY || '')
 
 	const listMusics = new ListMusics(musicRepository)
 	const streamMusic = new StreamMusic(musicRepository, fileStorage)
@@ -49,6 +52,7 @@ export function createContainer(): Container {
 		musicRepository,
 		playlistRepository,
 		fileStorage,
+		coverService,
 		listMusics,
 		streamMusic,
 		searchMusics,
