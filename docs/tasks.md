@@ -22,7 +22,7 @@
 - v Create use cases: `StreamMusic` (HTTP Range support)
 - v Create use cases: `SearchMusics`
 - v Create use cases: `CreatePlaylist`
-- x Create use cases: `AddMusicToPlaylist`
+- v Create use cases: `AddMusicToPlaylist`
 - x Create use cases: `ListPlaylists`
 - x Create use cases: `RemoveMusicFromPlaylist`
 - x Implement `ScannerService` (music-metadata for ID3 tags)
