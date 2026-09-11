@@ -1,24 +1,15 @@
 pre-commit:
   parallel: true
   commands:
-    server-lint:
+    server-check:
       glob: "apps/server/src/**/*.{ts,tsx}"
-      run: pnpm --filter @app-music/server lint
-    server-format:
-      glob: "apps/server/src/**/*.{ts,tsx}"
-      run: pnpm --filter @app-music/server format
-    mobile-lint:
+      run: pnpm --filter @app-music/server check
+    mobile-check:
       glob: "apps/mobile/src/**/*.{ts,tsx}"
-      run: pnpm --filter @app-music/mobile lint
-    mobile-format:
-      glob: "apps/mobile/src/**/*.{ts,tsx}"
-      run: pnpm --filter @app-music/mobile format
-    shared-lint:
+      run: pnpm --filter @app-music/mobile check
+    shared-check:
       glob: "shared/src/**/*.{ts,tsx}"
-      run: pnpm --filter @app-music/shared lint
-    shared-format:
-      glob: "shared/src/**/*.{ts,tsx}"
-      run: pnpm --filter @app-music/shared format
+      run: pnpm --filter @app-music/shared check
 
 pre-push:
   parallel: true
