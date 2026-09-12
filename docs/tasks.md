@@ -65,6 +65,10 @@
 - x Create `PlayerControls` component
 - x Create `ProgressBar` component
 - v Create `Equalizer` component (bass, mid, treble)
+- x Install and configure TanStack Query v5
+- x Create QueryClientProvider wrapper
+- x Replace usePlayer/usePlaylist hooks with TanStack Query hooks
+- x Add TanStack Query DevTools
 
 ## Frontend Testing
 
@@ -79,6 +83,9 @@
 - x Write unit tests for `PlaylistsScreen`
 - x Set up MSW v2 handlers for API mocking
 - x Write E2E tests with Detox (player flow)
+- x Write unit tests for TanStack Query hooks (musics, playlists, search)
+- x Test query invalidation and cache updates
+- x Test optimistic updates for playlist mutations
 
 ## Design System
 
