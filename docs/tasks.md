@@ -28,7 +28,7 @@
 - v Implement `ScannerService` (music-metadata for ID3 tags)
 - v Implement `CoverService` (Last.fm API integration)
 - v Create API routes: `/music`, `/music/:id`, `/stream/:id`, `/cover/:id`, `/search`
-- x Create API routes: `/playlists`, `/playlists/:id/add`, `/playlists/:id/remove/:musicId`
+- v Create API routes: `/playlists`, `/playlists/:id/add`, `/playlists/:id/remove/:musicId`
 - x Create API route: `/scan`
 - x Create controllers (MusicController, PlaylistController)
 - x Add `@fastify/cors` for cross-origin requests
