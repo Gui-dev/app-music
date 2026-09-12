@@ -49,22 +49,22 @@
 
 ## Frontend
 
-- x Initialize Expo project with NativeWind
+- v Initialize Expo project with NativeWind
 - x Configure Zod for frontend schema validation
-- x Set up React Navigation (stack + tab navigators)
-- x Create `AudioPlayer` service using `expo-av`
-- x Create `MusicApi` service with axios
-- x Create `usePlayer` hook
-- x Create `usePlaylist` hook
-- x Create `AppNavigator`
-- x Create `HomeScreen` (music list, navigation to playlists/search)
-- x Create `PlayerScreen` (album art, controls, progress bar, speed, equalizer)
-- x Create `SearchScreen` (search field, filtered results)
-- x Create `PlaylistsScreen` (list, create, open playlist)
+- v Set up React Navigation (stack + tab navigators)
+- v Create `AudioPlayer` service using `expo-av`
+- v Create `MusicApi` service with axios
+- v Create `usePlayer` hook
+- v Create `usePlaylist` hook
+- v Create `AppNavigator`
+- v Create `HomeScreen` (music list, navigation to playlists/search)
+- v Create `PlayerScreen` (album art, controls, progress bar, speed, equalizer)
+- v Create `SearchScreen` (search field, filtered results)
+- v Create `PlaylistsScreen` (list, create, open playlist)
 - x Create `MusicCard` component
 - x Create `PlayerControls` component
 - x Create `ProgressBar` component
-- x Create `Equalizer` component (bass, mid, treble)
+- v Create `Equalizer` component (bass, mid, treble)
 
 ## Frontend Testing
 
@@ -82,17 +82,17 @@
 
 ## Design System
 
-- x Define NativeWind config with color tokens
+- v Define NativeWind config with color tokens
 - x Create shared style constants (colors, spacing, typography)
-- x Apply dark theme across all screens
-- x Verify color tokens match `#0D0D0D`, `#262330`, `#FACC16`, `#FFFFFF`, `#404047`
+- v Apply dark theme across all screens
+- v Verify color tokens match `#0D0D0D`, `#262330`, `#FACC16`, `#FFFFFF`, `#404047`
 
 ## Deployment
 
 - x Create build script for backend (`node dist/server.js`)
 - x Create build script for mobile (`eas build --profile preview`)
 - x Configure port 3000 for backend
-- x Set up development workflow (`expo start`, `tsx watch`)
+- v Set up development workflow (`expo start`, `tsx watch`)
 
 ## Documentation
 
