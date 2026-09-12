@@ -24,6 +24,7 @@
 		"nativewind": "4",
 		"react": "19.2.3",
 		"react-native": "0.86.3",
+		"react-native-css-interop": "^0.2.6",
 		"react-native-safe-area-context": "~5.7.0",
 		"react-native-screens": "~4.26.0",
 		"tailwindcss": "3",
@@ -31,6 +32,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.0",
+		"@react-native/metro-config": "^0.87.1",
 		"@types/react": "^19.2.18",
 		"typescript": "^6.0.3",
 		"vitest": "^3.0.0"
