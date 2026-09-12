@@ -36,16 +36,16 @@
 
 ## Backend Testing
 
-- x Write unit tests for `ListMusics` use case
-- x Write unit tests for `StreamMusic` use case
-- x Write unit tests for `SearchMusics` use case
-- x Write unit tests for `CreatePlaylist` use case
-- x Write unit tests for `AddMusicToPlaylist` use case
-- x Write unit tests for `ListPlaylists` use case
-- x Write unit tests for `RemoveMusicFromPlaylist` use case
-- x Write repository tests with in-memory SQLite
+- v Write unit tests for `ListMusics` use case
+- v Write unit tests for `StreamMusic` use case
+- v Write unit tests for `SearchMusics` use case
+- v Write unit tests for `CreatePlaylist` use case
+- v Write unit tests for `AddMusicToPlaylist` use case
+- v Write unit tests for `ListPlaylists` use case
+- v Write unit tests for `RemoveMusicFromPlaylist` use case
+- v Write repository tests with in-memory SQLite
 - x Write integration tests for routes (supertest)
-- x Write in-memory repository tests
+- v Write in-memory repository tests
 
 ## Frontend
 
