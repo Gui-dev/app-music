@@ -2,6 +2,7 @@ import './global.css'
 import { useState } from 'react'
 import { Text, TextInput, FlatList, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { Ionicons } from '@expo/vector-icons'
 
 type Screen = 'Home' | 'Search' | 'Playlists' | 'Player'
 
@@ -159,17 +160,24 @@ export default function App() {
 					)}
 				/>
 
-				<View className="flex-row justify-around border-t border-border p-4">
-					<TouchableOpacity onPress={() => setScreen('Home')}>
-						<Text className="text-primary">Home</Text>
-					</TouchableOpacity>
-					<TouchableOpacity onPress={() => setScreen('Search')}>
-						<Text className="text-text-secondary">Search</Text>
-					</TouchableOpacity>
-					<TouchableOpacity onPress={() => setScreen('Playlists')}>
-						<Text className="text-text-secondary">Playlists</Text>
-					</TouchableOpacity>
-				</View>
+			<View className="flex-row justify-around border-t border-border px-4 pb-4 pt-3">
+				<TouchableOpacity onPress={() => setScreen('Home')} className="items-center">
+					<Ionicons name={screen === 'Home' ? 'musical-notes' : 'musical-notes-outline'} size={24} color={screen === 'Home' ? '#FACC16' : '#404047'} />
+					<Text className={`mt-1 text-xs ${screen === 'Home' ? 'text-primary' : 'text-text-secondary'}`}>Player</Text>
+				</TouchableOpacity>
+				<TouchableOpacity onPress={() => setScreen('Search')} className="items-center">
+					<Ionicons name={screen === 'Search' ? 'library' : 'library-outline'} size={24} color={screen === 'Search' ? '#FACC16' : '#404047'} />
+					<Text className={`mt-1 text-xs ${screen === 'Search' ? 'text-primary' : 'text-text-secondary'}`}>Biblioteca</Text>
+				</TouchableOpacity>
+				<TouchableOpacity onPress={() => setScreen('Playlists')} className="items-center">
+					<Ionicons name={screen === 'Playlists' ? 'equalizer' : 'equalizer-outline'} size={24} color={screen === 'Playlists' ? '#FACC16' : '#404047'} />
+					<Text className={`mt-1 text-xs ${screen === 'Playlists' ? 'text-primary' : 'text-text-secondary'}`}>Equalizador</Text>
+				</TouchableOpacity>
+				<TouchableOpacity className="items-center">
+					<Ionicons name="desktop-outline" size={24} color="#404047" />
+					<Text className="mt-1 text-xs text-text-secondary">Servidor</Text>
+				</TouchableOpacity>
+			</View>
 			</View>
 		</SafeAreaView>
 	)
