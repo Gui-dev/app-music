@@ -1,7 +1,6 @@
-import type { AVPlaybackStatus } from 'expo-av'
-import { useCallback, useEffect, useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { audioPlayer } from '../audio/audio-player'
-import { type Music, musicApi } from '../infra/api/music-api'
+import { musicApi, type Music } from '../infra/api/music-api'
 
 interface PlayerState {
 	currentMusic: Music | null
@@ -23,16 +22,13 @@ export function usePlayer() {
 	})
 
 	useEffect(() => {
-		audioPlayer.onPlaybackStatusUpdate((status: AVPlaybackStatus) => {
-			if (status.isLoaded) {
-				setState((prev) => ({
-					...prev,
-					isPlaying: status.isPlaying,
-					positionMillis: status.positionMillis,
-					durationMillis: status.durationMillis || 0,
-					rate: status.rate || 1,
-				}))
-			}
+		audioPlayer.onPlaybackStatusUpdate((status) => {
+			setState((prev) => ({
+				...prev,
+				isPlaying: status.isPlaying,
+				positionMillis: status.positionMillis,
+				durationMillis: status.durationMillis,
+			}))
 		})
 
 		return () => {
@@ -68,6 +64,7 @@ export function usePlayer() {
 
 	const setRate = useCallback(async (rate: number) => {
 		await audioPlayer.setRate(rate)
+		setState((prev) => ({ ...prev, rate }))
 	}, [])
 
 	return {

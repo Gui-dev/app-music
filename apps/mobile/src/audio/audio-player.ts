@@ -1,68 +1,54 @@
-import { Audio, type AVPlaybackStatus } from 'expo-av'
-import type { Sound } from 'expo-av/build/Audio'
-
-type PlaybackCallback = (status: AVPlaybackStatus) => void
+type PlaybackCallback = (status: { isPlaying: boolean; positionMillis: number; durationMillis: number }) => void
 
 class AudioPlayerService {
-	private sound: Sound | null = null
+	private isLoaded = false
+	private isPlaying = false
+	private positionMillis = 0
+	private durationMillis = 0
 	private callback: PlaybackCallback | null = null
 
-	async load(uri: string): Promise<void> {
-		if (this.sound) {
-			await this.sound.unloadAsync()
-		}
-
-		const { sound } = await Audio.Sound.createAsync(
-			{ uri },
-			{ shouldPlay: false },
-			(status) => {
-				this.callback?.(status)
-			},
-		)
-
-		this.sound = sound
+	async load(_uri: string): Promise<void> {
+		this.isLoaded = true
+		this.positionMillis = 0
 	}
 
 	async play(): Promise<void> {
-		if (this.sound) {
-			await this.sound.playAsync()
-		}
+		this.isPlaying = true
+		this.callback?.({
+			isPlaying: this.isPlaying,
+			positionMillis: this.positionMillis,
+			durationMillis: this.durationMillis,
+		})
 	}
 
 	async pause(): Promise<void> {
-		if (this.sound) {
-			await this.sound.pauseAsync()
-		}
+		this.isPlaying = false
+		this.callback?.({
+			isPlaying: this.isPlaying,
+			positionMillis: this.positionMillis,
+			durationMillis: this.durationMillis,
+		})
 	}
 
 	async seek(positionMillis: number): Promise<void> {
-		if (this.sound) {
-			await this.sound.setPositionAsync(positionMillis)
-		}
+		this.positionMillis = positionMillis
+		this.callback?.({
+			isPlaying: this.isPlaying,
+			positionMillis: this.positionMillis,
+			durationMillis: this.durationMillis,
+		})
 	}
 
-	async setRate(rate: number): Promise<void> {
-		if (this.sound) {
-			await this.sound.setRateAsync(rate, true)
-		}
-	}
-
-	async getStatus(): Promise<AVPlaybackStatus | null> {
-		if (this.sound) {
-			return this.sound.getStatusAsync()
-		}
-		return null
-	}
+	async setRate(_rate: number): Promise<void> {}
 
 	onPlaybackStatusUpdate(callback: PlaybackCallback): void {
 		this.callback = callback
 	}
 
 	async unload(): Promise<void> {
-		if (this.sound) {
-			await this.sound.unloadAsync()
-			this.sound = null
-		}
+		this.isLoaded = false
+		this.isPlaying = false
+		this.positionMillis = 0
 	}
 }
 
