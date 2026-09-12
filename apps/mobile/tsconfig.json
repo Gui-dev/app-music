@@ -1,41 +1,14 @@
 {
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "commonjs",
-    "lib": [
-      "ESNext"
-    ],
     "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "moduleResolution": "node",
     "jsx": "react-native",
-    "baseUrl": ".",
     "paths": {
-      "@shared/*": [
-        "../../shared/src/*"
-      ]
-    },
-    "composite": true
+      "@shared/*": ["../../shared/src/*"]
+    }
   },
   "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ],
-  "references": [
-    {
-      "path": "../../shared"
-    }
-  ],
-  "extends": "expo/tsconfig.base"
+    "src/**/*",
+    "nativewind-env.d.ts"
+  ]
 }
