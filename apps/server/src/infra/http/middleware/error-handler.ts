@@ -6,6 +6,8 @@ export async function errorHandler(
 	reply: FastifyReply,
 ) {
 	request.log.error(error)
+	console.error('ERROR:', error.message)
+	console.error('STACK:', error.stack)
 
 	const statusCode = error.statusCode || 500
 	const message = error.message || 'Internal Server Error'

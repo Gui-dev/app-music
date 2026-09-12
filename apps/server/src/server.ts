@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import cors from '@fastify/cors'
 import type { ZodTypeProvider } from '@fastify/type-provider-zod'
 import {
@@ -26,6 +27,7 @@ app.register(cors, {
 app.setErrorHandler(errorHandler)
 
 const container = createContainer()
+console.log('Container created, scannerService:', typeof container.scannerService)
 app.decorate('container', container)
 
 const server = app.withTypeProvider<ZodTypeProvider>()
