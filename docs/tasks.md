@@ -32,7 +32,7 @@
 - v Create API route: `/scan`
 - v Create controllers (MusicController, PlaylistController)
 - v Add `@fastify/cors` for cross-origin requests
-- x Add error handling middleware
+- v Add error handling middleware
 
 ## Backend Testing
 

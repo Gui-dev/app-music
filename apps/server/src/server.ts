@@ -6,6 +6,7 @@ import {
 } from '@fastify/type-provider-zod'
 import fastify from 'fastify'
 import { createContainer } from './infra/container'
+import { errorHandler } from './infra/http/middleware/error-handler'
 import { coverRoutes } from './infra/http/routes/cover-routes'
 import { musicRoutes } from './infra/http/routes/music-routes'
 import { playlistRoutes } from './infra/http/routes/playlist-routes'
@@ -21,6 +22,8 @@ app.setSerializerCompiler(serializerCompiler)
 app.register(cors, {
 	origin: true,
 })
+
+app.setErrorHandler(errorHandler)
 
 const container = createContainer()
 app.decorate('container', container)
