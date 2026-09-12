@@ -16,6 +16,7 @@
 		"check": "biome check src/"
 	},
 	"dependencies": {
+		"@fastify/cors": "^11.3.0",
 		"@fastify/type-provider-zod": "^1.0.0",
 		"better-sqlite3": "^11.10.0",
 		"drizzle-orm": "^0.45.2",

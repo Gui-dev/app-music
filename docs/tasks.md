@@ -31,7 +31,7 @@
 - v Create API routes: `/playlists`, `/playlists/:id/add`, `/playlists/:id/remove/:musicId`
 - v Create API route: `/scan`
 - v Create controllers (MusicController, PlaylistController)
-- x Add `@fastify/cors` for cross-origin requests
+- v Add `@fastify/cors` for cross-origin requests
 - x Add error handling middleware
 
 ## Backend Testing
