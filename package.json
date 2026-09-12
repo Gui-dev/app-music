@@ -5,8 +5,11 @@
 		"lint": "biome lint",
 		"format": "biome format --write",
 		"check": "biome check --write",
-		"test": "pnpm --filter server test && pnpm --filter mobile test",
-		"typecheck": "pnpm --filter server typecheck && pnpm --filter mobile typecheck"
+		"test": "pnpm --filter @app-music/server test && pnpm --filter @app-music/mobile test",
+		"typecheck": "pnpm --filter @app-music/server typecheck && pnpm --filter @app-music/mobile typecheck",
+		"dev": "pnpm --filter @app-music/server dev & pnpm --filter @app-music/mobile dev",
+		"dev:server": "pnpm --filter @app-music/server dev",
+		"dev:mobile": "pnpm --filter @app-music/mobile dev"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.0",
