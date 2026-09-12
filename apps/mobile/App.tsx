@@ -1,6 +1,7 @@
 import './global.css'
 import { useState } from 'react'
 import { Text, TextInput, FlatList, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 type Screen = 'Home' | 'Search' | 'Playlists' | 'Player'
 
@@ -25,39 +26,41 @@ export default function App() {
 
 	if (screen === 'Player' && selectedMusic) {
 		return (
-			<View className="flex-1 bg-bg p-6">
-				<TouchableOpacity onPress={() => setScreen('Home')}>
-					<Text className="text-primary mb-6">← Back</Text>
-				</TouchableOpacity>
+			<SafeAreaView className="flex-1 bg-bg">
+				<View className="flex-1 p-6">
+					<TouchableOpacity onPress={() => setScreen('Home')}>
+						<Text className="text-primary mb-6">← Back</Text>
+					</TouchableOpacity>
 
-				<View className="items-center">
-					<View className="mb-6 h-64 w-64 items-center justify-center rounded-2xl bg-surface">
-						<Text className="text-6xl text-primary">♪</Text>
+					<View className="items-center">
+						<View className="mb-6 h-64 w-64 items-center justify-center rounded-2xl bg-surface">
+							<Text className="text-6xl text-primary">♪</Text>
+						</View>
+
+						<Text className="text-xl font-bold text-text-primary">
+							{selectedMusic.title}
+						</Text>
+						<Text className="mt-1 text-base text-text-secondary">
+							{selectedMusic.artist}
+						</Text>
+						<Text className="mt-0.5 text-sm text-text-secondary">
+							{selectedMusic.album}
+						</Text>
 					</View>
 
-					<Text className="text-xl font-bold text-text-primary">
-						{selectedMusic.title}
-					</Text>
-					<Text className="mt-1 text-base text-text-secondary">
-						{selectedMusic.artist}
-					</Text>
-					<Text className="mt-0.5 text-sm text-text-secondary">
-						{selectedMusic.album}
-					</Text>
+					<View className="mt-8 items-center">
+						<TouchableOpacity className="h-16 w-16 items-center justify-center rounded-full bg-primary">
+							<Text className="text-3xl text-bg">▶</Text>
+						</TouchableOpacity>
+					</View>
 				</View>
-
-				<View className="mt-8 items-center">
-					<TouchableOpacity className="h-16 w-16 items-center justify-center rounded-full bg-primary">
-						<Text className="text-3xl text-bg">▶</Text>
-					</TouchableOpacity>
-				</View>
-			</View>
+			</SafeAreaView>
 		)
 	}
 
 	if (screen === 'Search') {
 		return (
-			<View className="flex-1 bg-bg">
+			<SafeAreaView className="flex-1 bg-bg">
 				<View className="p-4">
 					<TouchableOpacity onPress={() => setScreen('Home')}>
 						<Text className="text-primary mb-4">← Back</Text>
@@ -97,13 +100,13 @@ export default function App() {
 						</TouchableOpacity>
 					)}
 				/>
-			</View>
+			</SafeAreaView>
 		)
 	}
 
 	if (screen === 'Playlists') {
 		return (
-			<View className="flex-1 bg-bg">
+			<SafeAreaView className="flex-1 bg-bg">
 				<View className="p-4">
 					<TouchableOpacity onPress={() => setScreen('Home')}>
 						<Text className="text-primary mb-4">← Back</Text>
@@ -113,59 +116,61 @@ export default function App() {
 					</Text>
 					<Text className="text-text-secondary">No playlists yet</Text>
 				</View>
-			</View>
+			</SafeAreaView>
 		)
 	}
 
 	return (
-		<View className="flex-1 bg-bg">
-			<View className="flex-row items-center justify-between p-4">
-				<Text className="text-2xl font-bold text-text-primary">Music</Text>
-			</View>
+		<SafeAreaView className="flex-1 bg-bg" edges={['top']}>
+			<View className="flex-1">
+				<View className="flex-row items-center justify-between p-4">
+					<Text className="text-2xl font-bold text-text-primary">Music</Text>
+				</View>
 
-			<FlatList
-				data={MOCK_MUSICS}
-				keyExtractor={(item) => item.id}
-				renderItem={({ item }) => (
-					<TouchableOpacity
-						onPress={() => {
-							setSelectedMusic(item)
-							setScreen('Player')
-						}}
-						className="mx-4 mb-2 flex-row items-center rounded-lg bg-surface p-3"
-					>
-						<View className="mr-3 h-12 w-12 items-center justify-center rounded-lg bg-surface-hover">
-							<Text className="text-xl text-primary">♪</Text>
-						</View>
-						<View className="flex-1">
-							<Text className="text-base font-semibold text-text-primary">
-								{item.title}
-							</Text>
-							<Text className="text-sm text-text-secondary">
-								{item.artist} — {item.album}
-							</Text>
-						</View>
-						{item.duration != null && (
-							<Text className="ml-2 text-xs text-text-secondary">
-								{Math.floor(item.duration / 60)}:
-								{String(item.duration % 60).padStart(2, '0')}
-							</Text>
-						)}
+				<FlatList
+					data={MOCK_MUSICS}
+					keyExtractor={(item) => item.id}
+					renderItem={({ item }) => (
+						<TouchableOpacity
+							onPress={() => {
+								setSelectedMusic(item)
+								setScreen('Player')
+							}}
+							className="mx-4 mb-2 flex-row items-center rounded-lg bg-surface p-3"
+						>
+							<View className="mr-3 h-12 w-12 items-center justify-center rounded-lg bg-surface-hover">
+								<Text className="text-xl text-primary">♪</Text>
+							</View>
+							<View className="flex-1">
+								<Text className="text-base font-semibold text-text-primary">
+									{item.title}
+								</Text>
+								<Text className="text-sm text-text-secondary">
+									{item.artist} — {item.album}
+								</Text>
+							</View>
+							{item.duration != null && (
+								<Text className="ml-2 text-xs text-text-secondary">
+									{Math.floor(item.duration / 60)}:
+									{String(item.duration % 60).padStart(2, '0')}
+								</Text>
+							)}
+						</TouchableOpacity>
+					)}
+				/>
+
+				<View className="flex-row justify-around border-t border-border p-4">
+					<TouchableOpacity onPress={() => setScreen('Home')}>
+						<Text className="text-primary">Home</Text>
 					</TouchableOpacity>
-				)}
-			/>
-
-			<View className="flex-row justify-around border-t border-border p-4">
-				<TouchableOpacity onPress={() => setScreen('Home')}>
-					<Text className="text-primary">Home</Text>
-				</TouchableOpacity>
-				<TouchableOpacity onPress={() => setScreen('Search')}>
-					<Text className="text-text-secondary">Search</Text>
-				</TouchableOpacity>
-				<TouchableOpacity onPress={() => setScreen('Playlists')}>
-					<Text className="text-text-secondary">Playlists</Text>
-				</TouchableOpacity>
+					<TouchableOpacity onPress={() => setScreen('Search')}>
+						<Text className="text-text-secondary">Search</Text>
+					</TouchableOpacity>
+					<TouchableOpacity onPress={() => setScreen('Playlists')}>
+						<Text className="text-text-secondary">Playlists</Text>
+					</TouchableOpacity>
+				</View>
 			</View>
-		</View>
+		</SafeAreaView>
 	)
 }
