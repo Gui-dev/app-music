@@ -18,18 +18,18 @@
 	"dependencies": {
 		"@fastify/cors": "^11.3.0",
 		"@fastify/type-provider-zod": "^1.0.0",
-		"@tokenizer/token": "^0.3.0",
+		"@tokenizer/token": "0.3",
 		"better-sqlite3": "^11.10.0",
-		"content-type": "^3.1.0",
+		"content-type": "1",
 		"debug": "^4.4.3",
 		"drizzle-orm": "^0.45.2",
 		"fastify": "^5.0.0",
-		"file-type": "18",
-		"media-typer": "^2.0.0",
+		"file-type": "^18.6.0",
+		"media-typer": "1",
 		"music-metadata": "^8.3.0",
-		"strtok3": "^10.3.5",
-		"token-types": "^6.1.2",
-		"zod": "^3.24.0"
+		"strtok3": "^7.0.0",
+		"token-types": "5",
+		"zod": "^4.6.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.0",
