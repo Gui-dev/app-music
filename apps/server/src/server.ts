@@ -8,6 +8,7 @@ import { createContainer } from './infra/container'
 import { coverRoutes } from './infra/http/routes/cover-routes'
 import { musicRoutes } from './infra/http/routes/music-routes'
 import { playlistRoutes } from './infra/http/routes/playlist-routes'
+import { scanRoutes } from './infra/http/routes/scan-routes'
 import { searchRoutes } from './infra/http/routes/search-routes'
 import { streamRoutes } from './infra/http/routes/stream-routes'
 
@@ -30,6 +31,7 @@ app.register(searchRoutes)
 app.register(streamRoutes)
 app.register(coverRoutes)
 app.register(playlistRoutes)
+app.register(scanRoutes)
 
 const start = async () => {
 	try {

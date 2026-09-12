@@ -29,7 +29,7 @@
 - v Implement `CoverService` (Last.fm API integration)
 - v Create API routes: `/music`, `/music/:id`, `/stream/:id`, `/cover/:id`, `/search`
 - v Create API routes: `/playlists`, `/playlists/:id/add`, `/playlists/:id/remove/:musicId`
-- x Create API route: `/scan`
+- v Create API route: `/scan`
 - x Create controllers (MusicController, PlaylistController)
 - x Add `@fastify/cors` for cross-origin requests
 - x Add error handling middleware

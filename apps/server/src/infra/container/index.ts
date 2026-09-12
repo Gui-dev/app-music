@@ -10,6 +10,7 @@ import { MusicRepository } from '../repositories/music-repository'
 import { PlaylistRepository } from '../repositories/playlist-repository'
 import { CoverService } from '../services/cover-service'
 import { LocalFileStorage } from '../services/local-file-storage'
+import { ScannerService } from '../services/scanner-service'
 
 export interface Container {
 	db: AppDatabase
@@ -17,6 +18,7 @@ export interface Container {
 	playlistRepository: PlaylistRepository
 	fileStorage: LocalFileStorage
 	coverService: CoverService
+	scannerService: ScannerService
 	listMusics: ListMusics
 	streamMusic: StreamMusic
 	searchMusics: SearchMusics
@@ -33,6 +35,7 @@ export function createContainer(): Container {
 	const playlistRepository = new PlaylistRepository(db)
 	const fileStorage = new LocalFileStorage(process.env.MUSIC_PATH || '/music')
 	const coverService = new CoverService(process.env.LASTFM_API_KEY || '')
+	const scannerService = new ScannerService()
 
 	const listMusics = new ListMusics(musicRepository)
 	const streamMusic = new StreamMusic(musicRepository, fileStorage)
@@ -53,6 +56,7 @@ export function createContainer(): Container {
 		playlistRepository,
 		fileStorage,
 		coverService,
+		scannerService,
 		listMusics,
 		streamMusic,
 		searchMusics,
