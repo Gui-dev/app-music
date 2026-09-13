@@ -6,6 +6,7 @@ import { useMusics, useSearchMusics } from './hooks/queries/use-musics'
 import { usePlaylists } from './hooks/queries/use-playlists'
 import { useCreatePlaylist, useAddMusicToPlaylist, useRemoveMusicFromPlaylist } from './hooks/mutations/use-playlist-mutations'
 import { MusicCard } from './presentation/components/music-card'
+import { AlbumCard } from './presentation/components/album-card'
 import { PlayerControls } from './presentation/components/player-controls'
 import { ProgressBar } from './presentation/components/progress-bar'
 import { Equalizer } from './presentation/components/equalizer'
@@ -22,6 +23,7 @@ export function AppContent() {
 	const [progress, setProgress] = useState(0)
 	const [currentTime, setCurrentTime] = useState(0)
 	const [newPlaylistName, setNewPlaylistName] = useState('')
+	const [expandedAlbum, setExpandedAlbum] = useState<string | null>(null)
 
 	const { data: musics = [], isLoading: musicsLoading, error: musicsError } = useMusics()
 	const { data: playlists, isLoading: playlistsLoading } = usePlaylists()
@@ -175,25 +177,18 @@ export function AppContent() {
 								keyExtractor={([album]) => album}
 								renderItem={({ item }) => {
 									const [albumName, songs] = item
+									const isExpanded = expandedAlbum === albumName
 									return (
-										<View className="mx-4 mb-6">
-											<Text className="text-xl font-bold text-text-primary mb-3">{albumName}</Text>
-											<FlatList
-												data={songs}
-												keyExtractor={(item) => item.id}
-												renderItem={({ item }) => (
-													<MusicCard
-														music={item}
-														onPress={() => {
-															setSelectedMusic(item)
-															setScreen('Player')
-														}}
-														showDuration
-													/>
-												)}
-												ListHeaderComponentStyle={{ paddingBottom: 0 }}
-											/>
-										</View>
+										<AlbumCard
+											albumName={albumName}
+											songs={songs}
+											isExpanded={isExpanded}
+											onToggle={() => setExpandedAlbum(isExpanded ? null : albumName)}
+											onSongPress={(music) => {
+												setSelectedMusic(music)
+												setScreen('Player')
+											}}
+										/>
 									)
 								}}
 							/>

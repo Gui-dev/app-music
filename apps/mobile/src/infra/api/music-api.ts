@@ -1,10 +1,18 @@
 import axios from 'axios'
 import Constants from 'expo-constants'
+import { Platform } from 'react-native'
 
-// Use environment variable or default to localhost
-// For physical device testing, set EXPO_PUBLIC_API_BASE to your machine's local IP
-// e.g., EXPO_PUBLIC_API_BASE=http://192.168.1.100:3000
-const API_BASE = Constants.expoConfig?.extra?.EXPO_PUBLIC_API_BASE || 'http://localhost:3000'
+const defaultApiBase = Platform.select({
+	// Android emulators access the host machine through this special address.
+	android: 'http://10.0.2.2:3000',
+	default: 'http://localhost:3000',
+})
+
+// On a physical device, configure EXPO_PUBLIC_API_BASE with the LAN address of
+// the computer running the API (for example, http://192.168.1.100:3000).
+const API_BASE = (
+	Constants.expoConfig?.extra?.apiBase ?? defaultApiBase
+).replace(/\/$/, '')
 
 const api = axios.create({
 	baseURL: API_BASE,
