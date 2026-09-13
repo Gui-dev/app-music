@@ -90,7 +90,7 @@
 ## Design System
 
 - v Define NativeWind config with color tokens
-- x Create shared style constants (colors, spacing, typography)
+- v Create shared style constants (colors, spacing, typography)
 - v Apply dark theme across all screens
 - v Verify color tokens match `#0D0D0D`, `#262330`, `#FACC16`, `#FFFFFF`, `#404047`
 
