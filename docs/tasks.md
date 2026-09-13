@@ -61,9 +61,9 @@
 - v Create `PlayerScreen` (album art, controls, progress bar, speed, equalizer)
 - v Create `SearchScreen` (search field, filtered results)
 - v Create `PlaylistsScreen` (list, create, open playlist)
-- x Create `MusicCard` component
-- x Create `PlayerControls` component
-- x Create `ProgressBar` component
+- v Create `MusicCard` component
+- v Create `PlayerControls` component
+- v Create `ProgressBar` component
 - v Create `Equalizer` component (bass, mid, treble)
 - x Install and configure TanStack Query v5
 - x Create QueryClientProvider wrapper
