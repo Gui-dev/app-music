@@ -19,7 +19,7 @@ export async function searchRoutes(app: FastifyInstance) {
 							title: z.string(),
 							artist: z.string(),
 							album: z.string(),
-							duration: z.number(),
+							duration: z.number().nullable(),
 							coverUrl: z.string().nullable(),
 							trackNumber: z.number().nullable(),
 							year: z.number().nullable(),
