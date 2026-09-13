@@ -23,7 +23,7 @@ export function AppContent() {
 	const [currentTime, setCurrentTime] = useState(0)
 	const [newPlaylistName, setNewPlaylistName] = useState('')
 
-	const { data: musics, isLoading: musicsLoading } = useMusics()
+	const { data: musics = [], isLoading: musicsLoading, error: musicsError } = useMusics()
 	const { data: playlists, isLoading: playlistsLoading } = usePlaylists()
 	const searchResults = useSearchMusics(searchQuery)
 
@@ -41,7 +41,7 @@ export function AppContent() {
 
 	const goNext = () => {
 		if (!selectedMusic) return
-		const musicsList = musics || MOCK_MUSICS
+		const musicsList = musics || []
 		const index = musicsList.findIndex((m) => m.id === selectedMusic.id)
 		const next = musicsList[(index + 1) % musicsList.length]
 		setSelectedMusic(next)
@@ -52,7 +52,7 @@ export function AppContent() {
 
 	const goPrev = () => {
 		if (!selectedMusic) return
-		const musicsList = musics || MOCK_MUSICS
+		const musicsList = musics || []
 		const index = musicsList.findIndex((m) => m.id === selectedMusic.id)
 		const prev = musicsList[(index - 1 + musicsList.length) % musicsList.length]
 		setSelectedMusic(prev)
@@ -61,20 +61,9 @@ export function AppContent() {
 		setCurrentTime(0)
 	}
 
-	// Fallback mock data for when API is not available
-	const MOCK_MUSICS: Music[] = [
-		{ id: '1', title: 'Song 1', artist: 'Artist 1', album: 'Album 1', duration: 180, filePath: '', coverUrl: null, trackNumber: 1, year: 2024 },
-		{ id: '2', title: 'Song 2', artist: 'Artist 2', album: 'Album 2', duration: 240, filePath: '', coverUrl: null, trackNumber: 2, year: 2024 },
-		{ id: '3', title: 'Song 3', artist: 'Artist 3', album: 'Album 3', duration: 200, filePath: '', coverUrl: null, trackNumber: 3, year: 2024 },
-		{ id: '4', title: 'Midnight Drive', artist: 'The Night Owls', album: 'Nocturnal', duration: 210, filePath: '', coverUrl: null, trackNumber: 4, year: 2024 },
-		{ id: '5', title: 'Neon Dreams', artist: 'Synthwave Collective', album: 'Retro Future', duration: 195, filePath: '', coverUrl: null, trackNumber: 5, year: 2024 },
-		{ id: '6', title: 'Ocean Waves', artist: 'Ambient Sounds', album: 'Nature', duration: 300, filePath: '', coverUrl: null, trackNumber: 6, year: 2024 },
-	]
-
-	const musicList = musics && musics.length > 0 ? musics : MOCK_MUSICS
-	const searchList = searchResults.data || MOCK_MUSICS.filter((m) =>
-		m.title.toLowerCase().includes(searchQuery.toLowerCase())
-	)
+	// Use API data directly, no mock fallback
+	const musicList = musics || []
+	const searchList = searchResults.data || []
 
 	return (
 		<SafeAreaView className="flex-1 bg-bg" edges={['top']}>
@@ -134,9 +123,7 @@ export function AppContent() {
 							</View>
 						) : (
 							<FlatList
-								data={searchList.filter((m) =>
-									m.title.toLowerCase().includes(searchQuery.toLowerCase())
-								)}
+								data={searchResults.data || []}
 								keyExtractor={(item) => item.id}
 								renderItem={({ item }) => (
 									<MusicCard

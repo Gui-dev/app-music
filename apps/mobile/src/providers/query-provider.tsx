@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ReactNode } from 'react'
+import { Platform } from 'react-native'
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -16,7 +17,7 @@ export function QueryProvider({ children }: { children: ReactNode }) {
 	return (
 		<QueryClientProvider client={queryClient}>
 			{children}
-			<ReactQueryDevtools initialIsOpen={false} />
+			{Platform.OS === 'web' && <ReactQueryDevtools initialIsOpen={false} />}
 		</QueryClientProvider>
 	)
 }
