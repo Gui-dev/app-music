@@ -109,3 +109,10 @@
 - v Create `docs/skills/TESTING_FRONTEND_GUIDELINE.md`
 - v Create `docs/superpowers/plans/music-streaming-app-design.md`
 - v Create `AGENTS.md`
+
+## Additional Features (Backlog)
+
+- x Cover art fetching (Last.fm integration on mobile)
+- x Audio playback with expo-av (currently mocked)
+- x Playlist management UI (create, edit, delete, reorder)
+- x Pull-to-refresh on Biblioteca
