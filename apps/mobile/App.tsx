@@ -3,30 +3,18 @@ import { useState } from 'react'
 import { Text, TextInput, FlatList, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
+import { QueryProvider } from './src/providers/query-provider'
+import { useMusics, useSearchMusics } from './src/hooks/queries/use-musics'
+import { usePlaylists } from './src/hooks/queries/use-playlists'
+import { useCreatePlaylist, useAddMusicToPlaylist, useRemoveMusicFromPlaylist } from './src/hooks/mutations/use-playlist-mutations'
 import { MusicCard } from './src/presentation/components/music-card'
 import { PlayerControls } from './src/presentation/components/player-controls'
 import { ProgressBar } from './src/presentation/components/progress-bar'
 import { Equalizer } from './src/presentation/components/equalizer'
 import { BottomNav } from './src/presentation/components/bottom-nav'
+import { musicApi, type Music, type Playlist } from './src/infra/api/music-api'
 
 type Screen = 'Player' | 'Search' | 'Biblioteca' | 'Equalizer'
-
-interface Music {
-	id: string
-	title: string
-	artist: string
-	album: string
-	duration: number | null
-}
-
-const MOCK_MUSICS: Music[] = [
-	{ id: '1', title: 'Song 1', artist: 'Artist 1', album: 'Album 1', duration: 180 },
-	{ id: '2', title: 'Song 2', artist: 'Artist 2', album: 'Album 2', duration: 240 },
-	{ id: '3', title: 'Song 3', artist: 'Artist 3', album: 'Album 3', duration: 200 },
-	{ id: '4', title: 'Midnight Drive', artist: 'The Night Owls', album: 'Nocturnal', duration: 210 },
-	{ id: '5', title: 'Neon Dreams', artist: 'Synthwave Collective', album: 'Retro Future', duration: 195 },
-	{ id: '6', title: 'Ocean Waves', artist: 'Ambient Sounds', album: 'Nature', duration: 300 },
-]
 
 export default function App() {
 	const [screen, setScreen] = useState<Screen>('Player')
@@ -35,6 +23,15 @@ export default function App() {
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [progress, setProgress] = useState(0)
 	const [currentTime, setCurrentTime] = useState(0)
+	const [newPlaylistName, setNewPlaylistName] = useState('')
+
+	const { data: musics, isLoading: musicsLoading } = useMusics()
+	const { data: playlists, isLoading: playlistsLoading } = usePlaylists()
+	const searchResults = useSearchMusics(searchQuery)
+
+	const createPlaylist = useCreatePlaylist()
+	const addMusicToPlaylist = useAddMusicToPlaylist()
+	const removeMusicFromPlaylist = useRemoveMusicFromPlaylist()
 
 	// Mock duration for demo
 	const selectedDuration = selectedMusic?.duration ? selectedMusic.duration * 1000 : 180000
@@ -44,12 +41,11 @@ export default function App() {
 		setCurrentTime(value * selectedDuration)
 	}
 
-	const togglePlay = () => setIsPlaying(!isPlaying)
-
 	const goNext = () => {
 		if (!selectedMusic) return
-		const index = MOCK_MUSICS.findIndex((m) => m.id === selectedMusic.id)
-		const next = MOCK_MUSICS[(index + 1) % MOCK_MUSICS.length]
+		const musicsList = musics || MOCK_MUSICS
+		const index = musicsList.findIndex((m) => m.id === selectedMusic.id)
+		const next = musicsList[(index + 1) % musicsList.length]
 		setSelectedMusic(next)
 		setIsPlaying(true)
 		setProgress(0)
@@ -58,115 +54,144 @@ export default function App() {
 
 	const goPrev = () => {
 		if (!selectedMusic) return
-		const index = MOCK_MUSICS.findIndex((m) => m.id === selectedMusic.id)
-		const prev = MOCK_MUSICS[(index - 1 + MOCK_MUSICS.length) % MOCK_MUSICS.length]
+		const musicsList = musics || MOCK_MUSICS
+		const index = musicsList.findIndex((m) => m.id === selectedMusic.id)
+		const prev = musicsList[(index - 1 + musicsList.length) % musicsList.length]
 		setSelectedMusic(prev)
 		setIsPlaying(true)
 		setProgress(0)
 		setCurrentTime(0)
 	}
 
+	// Fallback mock data for when API is not available
+	const MOCK_MUSICS: Music[] = [
+		{ id: '1', title: 'Song 1', artist: 'Artist 1', album: 'Album 1', duration: 180, filePath: '', coverUrl: null, trackNumber: 1, year: 2024 },
+		{ id: '2', title: 'Song 2', artist: 'Artist 2', album: 'Album 2', duration: 240, filePath: '', coverUrl: null, trackNumber: 2, year: 2024 },
+		{ id: '3', title: 'Song 3', artist: 'Artist 3', album: 'Album 3', duration: 200, filePath: '', coverUrl: null, trackNumber: 3, year: 2024 },
+	]
+
+	const musicList = musics && musics.length > 0 ? musics : MOCK_MUSICS
+	const searchList = searchResults.data || MOCK_MUSICS.filter((m) =>
+		m.title.toLowerCase().includes(searchQuery.toLowerCase())
+	)
+
 	return (
-		<SafeAreaView className="flex-1 bg-bg" edges={['top']}>
-			<View className="flex-1">
-				{screen === 'Player' && (
-					<View className="flex-1 items-center justify-center p-6">
-						{selectedMusic ? (
-							<View className="w-full max-w-md items-center">
-								<View className="mb-6 h-64 w-64 items-center justify-center rounded-2xl bg-surface">
-									<Ionicons name="musical-notes" size={64} color="#FACC16" />
+		<QueryProvider>
+			<SafeAreaView className="flex-1 bg-bg" edges={['top']}>
+				<View className="flex-1">
+					{screen === 'Player' && (
+						<View className="flex-1 items-center justify-center p-6">
+							{selectedMusic ? (
+								<View className="w-full max-w-md items-center">
+									<View className="mb-6 h-64 w-64 items-center justify-center rounded-2xl bg-surface">
+										<Ionicons name="musical-notes" size={64} color="#FACC16" />
+									</View>
+									<Text className="text-xl font-bold text-text-primary text-center mb-1">{selectedMusic.title}</Text>
+									<Text className="text-base text-text-secondary text-center mb-0.5">{selectedMusic.artist}</Text>
+									<Text className="text-sm text-text-secondary text-center mb-6">{selectedMusic.album}</Text>
+
+									<ProgressBar
+										progress={progress}
+										currentTime={currentTime}
+										duration={selectedDuration}
+										onSeek={(value) => handleSeek(value)}
+									/>
+
+									<PlayerControls
+										isPlaying={isPlaying}
+										onPlay={() => setIsPlaying(true)}
+										onPause={() => setIsPlaying(false)}
+										onPrev={goPrev}
+										onNext={goNext}
+									/>
 								</View>
-								<Text className="text-xl font-bold text-text-primary text-center mb-1">{selectedMusic.title}</Text>
-								<Text className="text-base text-text-secondary text-center mb-0.5">{selectedMusic.artist}</Text>
-								<Text className="text-sm text-text-secondary text-center mb-6">{selectedMusic.album}</Text>
+							) : (
+								<View className="items-center">
+									<View className="mb-6 h-64 w-64 items-center justify-center rounded-2xl bg-surface">
+										<Ionicons name="musical-notes" size={64} color="#FACC16" />
+									</View>
+									<Text className="text-xl font-bold text-text-primary">No music selected</Text>
+									<Text className="mt-1 text-base text-text-secondary">Select a song from Biblioteca</Text>
+								</View>
+							)}
+						</View>
+					)}
 
-								<ProgressBar
-									progress={progress}
-									currentTime={currentTime}
-									duration={selectedDuration}
-									onSeek={(value) => handleSeek(value)}
-								/>
-
-								<PlayerControls
-									isPlaying={isPlaying}
-									onPlay={() => setIsPlaying(true)}
-									onPause={() => setIsPlaying(false)}
-									onPrev={goPrev}
-									onNext={goNext}
+					{screen === 'Search' && (
+						<View className="flex-1">
+							<View className="p-4">
+								<TextInput
+									className="rounded-lg bg-surface px-4 py-3 text-text-primary"
+									placeholder="Search music..."
+									placeholderTextColor="#404047"
+									value={searchQuery}
+									onChangeText={setSearchQuery}
 								/>
 							</View>
-						) : (
-							<View className="items-center">
-								<View className="mb-6 h-64 w-64 items-center justify-center rounded-2xl bg-surface">
-									<Ionicons name="musical-notes" size={64} color="#FACC16" />
+							{searchResults.isLoading ? (
+								<View className="flex-1 items-center justify-center">
+									<Text className="text-text-secondary">Searching...</Text>
 								</View>
-								<Text className="text-xl font-bold text-text-primary">No music selected</Text>
-								<Text className="mt-1 text-base text-text-secondary">Select a song from Biblioteca</Text>
+							) : (
+								<FlatList
+									data={searchList.filter((m) =>
+										m.title.toLowerCase().includes(searchQuery.toLowerCase())
+									)}
+									keyExtractor={(item) => item.id}
+									renderItem={({ item }) => (
+										<MusicCard
+											music={item}
+											onPress={() => {
+												setSelectedMusic(item)
+												setScreen('Player')
+											}}
+										/>
+									)}
+								/>
+							)}
+						</View>
+					)}
+
+					{screen === 'Biblioteca' && (
+						<View className="flex-1">
+							<View className="p-4">
+								<View className="flex-row items-center justify-between mb-4">
+									<Text className="text-2xl font-bold text-text-primary">Biblioteca</Text>
+									<Text className="text-sm text-text-secondary">{musicList.length} faixas</Text>
+								</View>
 							</View>
-						)}
-					</View>
-				)}
-
-				{screen === 'Search' && (
-					<View className="flex-1">
-						<View className="p-4">
-							<TextInput
-								className="rounded-lg bg-surface px-4 py-3 text-text-primary"
-								placeholder="Search music..."
-								placeholderTextColor="#404047"
-								value={searchQuery}
-								onChangeText={setSearchQuery}
-							/>
-						</View>
-						<FlatList
-							data={MOCK_MUSICS.filter((m) =>
-								m.title.toLowerCase().includes(searchQuery.toLowerCase())
-							)}
-							keyExtractor={(item) => item.id}
-							renderItem={({ item }) => (
-								<MusicCard
-									music={item}
-									onPress={() => {
-										setSelectedMusic(item)
-										setScreen('Player')
-									}}
+							{musicsLoading ? (
+								<View className="flex-1 items-center justify-center">
+									<Text className="text-text-secondary">Loading...</Text>
+								</View>
+							) : (
+								<FlatList
+									data={musicList}
+									keyExtractor={(item) => item.id}
+									renderItem={({ item }) => (
+										<MusicCard
+											music={item}
+											onPress={() => {
+												setSelectedMusic(item)
+												setScreen('Player')
+											}}
+											showDuration
+										/>
+									)}
 								/>
 							)}
-						/>
-					</View>
-				)}
-
-				{screen === 'Biblioteca' && (
-					<View className="flex-1">
-						<View className="p-4">
-							<Text className="mb-4 text-2xl font-bold text-text-primary">Biblioteca</Text>
-							<Text className="text-sm text-text-secondary">{MOCK_MUSICS.length} faixas</Text>
 						</View>
-						<FlatList
-							data={MOCK_MUSICS}
-							keyExtractor={(item) => item.id}
-							renderItem={({ item }) => (
-								<MusicCard
-									music={item}
-									onPress={() => {
-										setSelectedMusic(item)
-										setScreen('Player')
-									}}
-									showDuration
-								/>
-							)}
-						/>
-					</View>
-				)}
+					)}
 
-				{screen === 'Equalizer' && (
-					<View className="flex-1">
-						<Equalizer />
-					</View>
-				)}
+					{screen === 'Equalizer' && (
+						<View className="flex-1">
+							<Equalizer />
+						</View>
+					)}
 
-				<BottomNav screen={screen} setScreen={setScreen} />
-			</View>
-		</SafeAreaView>
+					<BottomNav screen={screen} setScreen={setScreen} />
+				</View>
+			</SafeAreaView>
+		</QueryProvider>
 	)
 }
