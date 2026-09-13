@@ -61,9 +61,23 @@ export function AppContent() {
 		setCurrentTime(0)
 	}
 
+	// Group music by album
+	const groupByAlbum = (songs: Music[]) => {
+		const albums = songs.reduce((acc, song) => {
+			const albumKey = song.album || 'Unknown Album'
+			if (!acc[albumKey]) {
+				acc[albumKey] = []
+			}
+			acc[albumKey].push(song)
+			return acc
+		}, {} as Record<string, Music[]>)
+		return Object.entries(albums).sort(([a], [b]) => a.localeCompare(b))
+	}
+
 	// Use API data directly, no mock fallback
 	const musicList = musics || []
 	const searchList = searchResults.data || []
+	const albumGroups = groupByAlbum(musicList)
 
 	return (
 		<SafeAreaView className="flex-1 bg-bg" edges={['top']}>
@@ -144,27 +158,44 @@ export function AppContent() {
 						<View className="p-4">
 							<View className="flex-row items-center justify-between mb-4">
 								<Text className="text-2xl font-bold text-text-primary">Biblioteca</Text>
-								<Text className="text-sm text-text-secondary">{musicList.length} faixas</Text>
+								<Text className="text-sm text-text-secondary">{musicList.length} faixas • {albumGroups.length} álbuns</Text>
 							</View>
 						</View>
 						{musicsLoading ? (
 							<View className="flex-1 items-center justify-center">
 								<Text className="text-text-secondary">Loading...</Text>
 							</View>
+						) : albumGroups.length === 0 ? (
+							<View className="flex-1 items-center justify-center">
+								<Text className="text-text-secondary">No music found</Text>
+							</View>
 						) : (
 							<FlatList
-								data={musicList}
-								keyExtractor={(item) => item.id}
-								renderItem={({ item }) => (
-									<MusicCard
-										music={item}
-										onPress={() => {
-											setSelectedMusic(item)
-											setScreen('Player')
-										}}
-										showDuration
-									/>
-								)}
+								data={albumGroups}
+								keyExtractor={([album]) => album}
+								renderItem={({ item }) => {
+									const [albumName, songs] = item
+									return (
+										<View className="mx-4 mb-6">
+											<Text className="text-xl font-bold text-text-primary mb-3">{albumName}</Text>
+											<FlatList
+												data={songs}
+												keyExtractor={(item) => item.id}
+												renderItem={({ item }) => (
+													<MusicCard
+														music={item}
+														onPress={() => {
+															setSelectedMusic(item)
+															setScreen('Player')
+														}}
+														showDuration
+													/>
+												)}
+												ListHeaderComponentStyle={{ paddingBottom: 0 }}
+											/>
+										</View>
+									)
+								}}
 							/>
 						)}
 					</View>
