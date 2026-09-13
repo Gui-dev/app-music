@@ -65,10 +65,10 @@
 - v Create `PlayerControls` component
 - v Create `ProgressBar` component
 - v Create `Equalizer` component (bass, mid, treble)
-- x Install and configure TanStack Query v5
-- x Create QueryClientProvider wrapper
-- x Replace usePlayer/usePlaylist hooks with TanStack Query hooks
-- x Add TanStack Query DevTools
+- v Install and configure TanStack Query v5
+- v Create QueryClientProvider wrapper
+- v Replace usePlayer/usePlaylist hooks with TanStack Query hooks
+- v Add TanStack Query DevTools
 
 ## Frontend Testing
 
