@@ -1,8 +1,12 @@
 import './global.css'
 import { useState } from 'react'
-import { Text, TextInput, FlatList, TouchableOpacity, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { Text, TextInput, FlatList, TouchableOpacity, View, SafeAreaView } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import { MusicCard } from './presentation/components/music-card'
+import { PlayerControls } from './presentation/components/player-controls'
+import { ProgressBar } from './presentation/components/progress-bar'
+import { Equalizer } from './presentation/components/equalizer'
+import { BottomNav } from './presentation/components/bottom-nav'
 
 type Screen = 'Player' | 'Search' | 'Biblioteca' | 'Equalizer'
 
@@ -18,35 +22,48 @@ const MOCK_MUSICS: Music[] = [
 	{ id: '1', title: 'Song 1', artist: 'Artist 1', album: 'Album 1', duration: 180 },
 	{ id: '2', title: 'Song 2', artist: 'Artist 2', album: 'Album 2', duration: 240 },
 	{ id: '3', title: 'Song 3', artist: 'Artist 3', album: 'Album 3', duration: 200 },
+	{ id: '4', title: 'Midnight Drive', artist: 'The Night Owls', album: 'Nocturnal', duration: 210 },
+	{ id: '5', title: 'Neon Dreams', artist: 'Synthwave Collective', album: 'Retro Future', duration: 195 },
+	{ id: '6', title: 'Ocean Waves', artist: 'Ambient Sounds', album: 'Nature', duration: 300 },
 ]
-
-function BottomNav({ screen, setScreen }: { screen: Screen; setScreen: (s: Screen) => void }) {
-	return (
-		<View className="flex-row justify-around border-t border-border px-4 pb-4 pt-3">
-			<TouchableOpacity onPress={() => setScreen('Player')} className="items-center">
-				<Ionicons name={screen === 'Player' ? 'musical-notes' : 'musical-notes-outline'} size={24} color={screen === 'Player' ? '#FACC16' : '#404047'} />
-				<Text className={`mt-1 text-xs ${screen === 'Player' ? 'text-primary' : 'text-text-secondary'}`}>Player</Text>
-			</TouchableOpacity>
-			<TouchableOpacity onPress={() => setScreen('Search')} className="items-center">
-				<Ionicons name={screen === 'Search' ? 'search' : 'search-outline'} size={24} color={screen === 'Search' ? '#FACC16' : '#404047'} />
-				<Text className={`mt-1 text-xs ${screen === 'Search' ? 'text-primary' : 'text-text-secondary'}`}>Search</Text>
-			</TouchableOpacity>
-			<TouchableOpacity onPress={() => setScreen('Biblioteca')} className="items-center">
-				<Ionicons name={screen === 'Biblioteca' ? 'library' : 'library-outline'} size={24} color={screen === 'Biblioteca' ? '#FACC16' : '#404047'} />
-				<Text className={`mt-1 text-xs ${screen === 'Biblioteca' ? 'text-primary' : 'text-text-secondary'}`}>Biblioteca</Text>
-			</TouchableOpacity>
-			<TouchableOpacity onPress={() => setScreen('Equalizer')} className="items-center">
-				<Ionicons name={screen === 'Equalizer' ? 'equalizer' : 'equalizer-outline'} size={24} color={screen === 'Equalizer' ? '#FACC16' : '#404047'} />
-				<Text className={`mt-1 text-xs ${screen === 'Equalizer' ? 'text-primary' : 'text-text-secondary'}`}>Equalizador</Text>
-			</TouchableOpacity>
-		</View>
-	)
-}
 
 export default function App() {
 	const [screen, setScreen] = useState<Screen>('Player')
 	const [selectedMusic, setSelectedMusic] = useState<Music | null>(null)
 	const [searchQuery, setSearchQuery] = useState('')
+	const [isPlaying, setIsPlaying] = useState(false)
+	const [progress, setProgress] = useState(0)
+	const [currentTime, setCurrentTime] = useState(0)
+
+	// Mock duration for demo
+	const selectedDuration = selectedMusic?.duration ? selectedMusic.duration * 1000 : 180000
+
+	const handleSeek = (value: number) => {
+		setProgress(value)
+		setCurrentTime(value * selectedDuration)
+	}
+
+	const togglePlay = () => setIsPlaying(!isPlaying)
+
+	const goNext = () => {
+		if (!selectedMusic) return
+		const index = MOCK_MUSICS.findIndex((m) => m.id === selectedMusic.id)
+		const next = MOCK_MUSICS[(index + 1) % MOCK_MUSICS.length]
+		setSelectedMusic(next)
+		setIsPlaying(true)
+		setProgress(0)
+		setCurrentTime(0)
+	}
+
+	const goPrev = () => {
+		if (!selectedMusic) return
+		const index = MOCK_MUSICS.findIndex((m) => m.id === selectedMusic.id)
+		const prev = MOCK_MUSICS[(index - 1 + MOCK_MUSICS.length) % MOCK_MUSICS.length]
+		setSelectedMusic(prev)
+		setIsPlaying(true)
+		setProgress(0)
+		setCurrentTime(0)
+	}
 
 	return (
 		<SafeAreaView className="flex-1 bg-bg" edges={['top']}>
@@ -54,22 +71,37 @@ export default function App() {
 				{screen === 'Player' && (
 					<View className="flex-1 items-center justify-center p-6">
 						{selectedMusic ? (
-							<>
+							<View className="w-full max-w-md items-center">
 								<View className="mb-6 h-64 w-64 items-center justify-center rounded-2xl bg-surface">
-									<Text className="text-6xl text-primary">♪</Text>
+									<Ionicons name="musical-notes" size={64} color="#FACC16" />
 								</View>
-								<Text className="text-xl font-bold text-text-primary">{selectedMusic.title}</Text>
-								<Text className="mt-1 text-base text-text-secondary">{selectedMusic.artist}</Text>
-								<Text className="mt-0.5 text-sm text-text-secondary">{selectedMusic.album}</Text>
-							</>
+								<Text className="text-xl font-bold text-text-primary text-center mb-1">{selectedMusic.title}</Text>
+								<Text className="text-base text-text-secondary text-center mb-0.5">{selectedMusic.artist}</Text>
+								<Text className="text-sm text-text-secondary text-center mb-6">{selectedMusic.album}</Text>
+
+								<ProgressBar
+									progress={progress}
+									currentTime={currentTime}
+									duration={selectedDuration}
+									onSeek={(value) => handleSeek(value)}
+								/>
+
+								<PlayerControls
+									isPlaying={isPlaying}
+									onPlay={() => setIsPlaying(true)}
+									onPause={() => setIsPlaying(false)}
+									onPrev={goPrev}
+									onNext={goNext}
+								/>
+							</View>
 						) : (
-							<>
+							<View className="items-center">
 								<View className="mb-6 h-64 w-64 items-center justify-center rounded-2xl bg-surface">
-									<Text className="text-6xl text-primary">♪</Text>
+									<Ionicons name="musical-notes" size={64} color="#FACC16" />
 								</View>
 								<Text className="text-xl font-bold text-text-primary">No music selected</Text>
 								<Text className="mt-1 text-base text-text-secondary">Select a song from Biblioteca</Text>
-							</>
+							</View>
 						)}
 					</View>
 				)}
@@ -91,21 +123,13 @@ export default function App() {
 							)}
 							keyExtractor={(item) => item.id}
 							renderItem={({ item }) => (
-								<TouchableOpacity
+								<MusicCard
+									music={item}
 									onPress={() => {
 										setSelectedMusic(item)
 										setScreen('Player')
 									}}
-									className="mx-4 mb-2 flex-row items-center rounded-lg bg-surface p-3"
-								>
-									<View className="mr-3 h-12 w-12 items-center justify-center rounded-lg bg-surface-hover">
-										<Text className="text-xl text-primary">♪</Text>
-									</View>
-									<View className="flex-1">
-										<Text className="text-base font-semibold text-text-primary">{item.title}</Text>
-										<Text className="text-sm text-text-secondary">{item.artist}</Text>
-									</View>
-								</TouchableOpacity>
+								/>
 							)}
 						/>
 					</View>
@@ -115,83 +139,27 @@ export default function App() {
 					<View className="flex-1">
 						<View className="p-4">
 							<Text className="mb-4 text-2xl font-bold text-text-primary">Biblioteca</Text>
-							<Text className="text-sm text-text-secondary">3 faixas</Text>
+							<Text className="text-sm text-text-secondary">{MOCK_MUSICS.length} faixas</Text>
 						</View>
 						<FlatList
 							data={MOCK_MUSICS}
 							keyExtractor={(item) => item.id}
 							renderItem={({ item }) => (
-								<TouchableOpacity
+								<MusicCard
+									music={item}
 									onPress={() => {
 										setSelectedMusic(item)
 										setScreen('Player')
 									}}
-									className="mx-4 mb-2 flex-row items-center rounded-lg bg-surface p-3"
-								>
-									<View className="mr-3 h-12 w-12 items-center justify-center rounded-lg bg-surface-hover">
-										<Text className="text-xl text-primary">♪</Text>
-									</View>
-									<View className="flex-1">
-										<Text className="text-base font-semibold text-text-primary">{item.title}</Text>
-										<Text className="text-sm text-text-secondary">{item.artist}</Text>
-									</View>
-									{item.duration != null && (
-										<Text className="ml-2 text-xs text-text-secondary">
-											{Math.floor(item.duration / 60)}:{String(item.duration % 60).padStart(2, '0')}
-										</Text>
-									)}
-								</TouchableOpacity>
+									showDuration
+								/>
 							)}
 						/>
 					</View>
 				)}
 
 				{screen === 'Equalizer' && (
-					<View className="flex-1 p-4">
-						<Text className="mb-6 text-2xl font-bold text-text-primary">Equalizador</Text>
-
-						<View className="mb-6">
-							<View className="mb-2 flex-row items-center justify-between">
-								<Text className="text-text-primary">Graves (Bass)</Text>
-								<Text className="text-primary">+4 dB</Text>
-							</View>
-							<View className="h-2 rounded-full bg-surface">
-								<View className="h-2 w-3/5 rounded-full bg-primary" />
-							</View>
-						</View>
-
-						<View className="mb-6">
-							<View className="mb-2 flex-row items-center justify-between">
-								<Text className="text-text-primary">Médios (Mid)</Text>
-								<Text className="text-primary">+1 dB</Text>
-							</View>
-							<View className="h-2 rounded-full bg-surface">
-								<View className="h-2 w-1/2 rounded-full bg-primary" />
-							</View>
-						</View>
-
-						<View className="mb-6">
-							<View className="mb-2 flex-row items-center justify-between">
-								<Text className="text-text-primary">Agudos (Treble)</Text>
-								<Text className="text-primary">+3 dB</Text>
-							</View>
-							<View className="h-2 rounded-full bg-surface">
-								<View className="h-2 w-[45%] rounded-full bg-primary" />
-							</View>
-						</View>
-
-						<View className="flex-row gap-3">
-							<TouchableOpacity className="rounded-lg bg-primary px-6 py-3">
-								<Text className="font-bold text-bg">FLAT</Text>
-							</TouchableOpacity>
-							<TouchableOpacity className="rounded-lg bg-surface px-6 py-3">
-								<Text className="text-text-primary">BASS BOOST</Text>
-							</TouchableOpacity>
-							<TouchableOpacity className="rounded-lg bg-surface px-6 py-3">
-								<Text className="text-text-primary">ROCK</Text>
-							</TouchableOpacity>
-						</View>
-					</View>
+					<Equalizer />
 				)}
 
 				<BottomNav screen={screen} setScreen={setScreen} />

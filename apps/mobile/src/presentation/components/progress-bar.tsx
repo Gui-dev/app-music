@@ -1,51 +1,49 @@
-import { Text, TouchableOpacity, View } from 'react-native'
+import { View, Text, TouchableOpacity, PanResponder } from 'react-native'
 
 interface ProgressBarProps {
-	positionMillis: number
-	durationMillis: number
-	onSeek: (positionMillis: number) => void
+	progress: number
+	currentTime: number
+	duration: number
+	onSeek: (value: number) => void
 }
 
-function formatTime(ms: number): string {
-	const totalSeconds = Math.floor(ms / 1000)
-	const minutes = Math.floor(totalSeconds / 60)
-	const seconds = totalSeconds % 60
-	return `${minutes}:${String(seconds).padStart(2, '0')}`
-}
+export function ProgressBar({ progress, currentTime, duration, onSeek }: ProgressBarProps) {
+	const formatTime = (ms: number) => {
+		const totalSeconds = Math.floor(ms / 1000)
+		const minutes = Math.floor(totalSeconds / 60)
+		const seconds = totalSeconds % 60
+		return `${minutes}:${String(seconds).padStart(2, '0')}`
+	}
 
-export function ProgressBar({
-	positionMillis,
-	durationMillis,
-	onSeek,
-}: ProgressBarProps) {
-	const progress = durationMillis > 0 ? positionMillis / durationMillis : 0
+	const panResponder = PanResponder.create({
+		onStartShouldSetPanResponder: () => true,
+		onPanResponderGrant: () => {},
+		onPanResponderMove: (_, gesture) => {
+			const width = 300 // approximate width
+			const seekPercent = Math.max(0, Math.min(1, (gesture.dx + width / 2) / width))
+			onSeek(seekPercent)
+		},
+		onPanResponderRelease: () => {},
+	})
 
 	return (
-		<View className="w-full">
-			<TouchableOpacity
-				onPress={(e) => {
-					const { locationX } = e.nativeEvent
-					const width = 300
-					const percentage = Math.max(0, Math.min(1, locationX / width))
-					onSeek(Math.floor(percentage * durationMillis))
-				}}
-				className="h-5 w-full justify-center"
+		<View className="w-full px-4">
+			<View className="flex-row justify-between mb-1">
+				<Text className="text-xs text-text-secondary">{formatTime(currentTime)}</Text>
+				<Text className="text-xs text-text-secondary">{formatTime(duration)}</Text>
+			</View>
+			<View
+				{...panResponder.panHandlers}
+				className="h-2 bg-surface rounded-full overflow-hidden relative"
 			>
-				<View className="h-1 overflow-hidden rounded-full bg-surface-hover">
-					<View
-						className="h-full rounded-full bg-primary"
-						style={{ width: `${progress * 100}%` }}
-					/>
-				</View>
-			</TouchableOpacity>
-
-			<View className="mt-1 flex-row justify-between">
-				<Text className="text-xs text-text-secondary">
-					{formatTime(positionMillis)}
-				</Text>
-				<Text className="text-xs text-text-secondary">
-					{formatTime(durationMillis)}
-				</Text>
+				<View
+					className="h-2 bg-primary rounded-full absolute top-0 left-0"
+					style={{ width: `${progress * 100}%` }}
+				/>
+				<View
+					className="absolute top-1/2 -translate-y-1/2 right-0 w-4 h-4 bg-primary rounded-full"
+					style={{ marginRight: -2, left: `${progress * 100}%` }}
+				/>
 			</View>
 		</View>
 	)
