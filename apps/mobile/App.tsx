@@ -1,6 +1,7 @@
 import './global.css'
 import { useState } from 'react'
-import { Text, TextInput, FlatList, TouchableOpacity, View, SafeAreaView } from 'react-native'
+import { Text, TextInput, FlatList, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { MusicCard } from './src/presentation/components/music-card'
 import { PlayerControls } from './src/presentation/components/player-controls'
@@ -159,7 +160,9 @@ export default function App() {
 				)}
 
 				{screen === 'Equalizer' && (
-					<Equalizer />
+					<View className="flex-1">
+						<Equalizer />
+					</View>
 				)}
 
 				<BottomNav screen={screen} setScreen={setScreen} />
