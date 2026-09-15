@@ -24,6 +24,7 @@ export default defineConfig({
 				'react-native-css-interop.js',
 			),
 			'expo-constants': resolve(mockDir, 'expo-constants.js'),
+			'expo-av': resolve(mockDir, 'expo-av.js'),
 		},
 	},
 	test: {
@@ -31,5 +32,8 @@ export default defineConfig({
 		setupFiles: ['./vitest.setup.ts'],
 		environment: 'jsdom',
 		exclude: ['e2e/**', 'node_modules/**'],
+	},
+	define: {
+		__DEV__: 'true',
 	},
 })

@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { fireEvent, render } from '@testing-library/react'
 import { AppContent } from './app-content'
+import * as usePlayer from './hooks/use-player'
 import * as usePlaylistMutations from './hooks/mutations/use-playlist-mutations'
 import * as useMusics from './hooks/queries/use-musics'
 import * as usePlaylists from './hooks/queries/use-playlists'
@@ -8,6 +9,8 @@ import * as usePlaylists from './hooks/queries/use-playlists'
 vi.mock('./hooks/queries/use-musics')
 vi.mock('./hooks/queries/use-playlists')
 vi.mock('./hooks/mutations/use-playlist-mutations')
+vi.mock('./hooks/use-player')
+vi.mock('./audio/audio-player')
 
 const mockMusics = [
 	{
@@ -87,6 +90,19 @@ describe('AppContent', () => {
 		vi.mocked(usePlaylistMutations.useRemoveMusicFromPlaylist).mockReturnValue({
 			mutateAsync: vi.fn().mockResolvedValue(undefined),
 		} as unknown as ReturnType<typeof usePlaylistMutations.useRemoveMusicFromPlaylist>)
+		vi.mocked(usePlayer.usePlayer).mockReturnValue({
+			currentMusic: null,
+			isPlaying: false,
+			positionMillis: 0,
+			durationMillis: 0,
+			rate: 1,
+			isLoading: false,
+			loadAndPlay: vi.fn(),
+			play: vi.fn(),
+			pause: vi.fn(),
+			seek: vi.fn(),
+			setRate: vi.fn(),
+		} as unknown as ReturnType<typeof usePlayer.usePlayer>)
 	})
 
 	it('renders Player screen by default', () => {

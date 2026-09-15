@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons'
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import {
 	FlatList,
 	RefreshControl,
@@ -16,6 +16,7 @@ import {
 } from './hooks/mutations/use-playlist-mutations'
 import { useMusics, useSearchMusics } from './hooks/queries/use-musics'
 import { usePlaylists } from './hooks/queries/use-playlists'
+import { usePlayer } from './hooks/use-player'
 import { type Music, musicApi, type Playlist } from './infra/api/music-api'
 import { AlbumCard } from './presentation/components/album-card'
 import { BottomNav } from './presentation/components/bottom-nav'
@@ -31,12 +32,12 @@ export function AppContent() {
 	const [screen, setScreen] = useState<Screen>('Player')
 	const [selectedMusic, setSelectedMusic] = useState<Music | null>(null)
 	const [searchQuery, setSearchQuery] = useState('')
-	const [isPlaying, setIsPlaying] = useState(false)
-	const [progress, setProgress] = useState(0)
-	const [currentTime, setCurrentTime] = useState(0)
 	const [newPlaylistName, setNewPlaylistName] = useState('')
 	const [expandedAlbum, setExpandedAlbum] = useState<string | null>(null)
 	const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null)
+
+	const player = usePlayer()
+	const lastPlayedIdRef = useRef<string | null>(null)
 
 	const {
 		data: musics = [],
@@ -52,37 +53,45 @@ export function AppContent() {
 	const addMusicToPlaylist = useAddMusicToPlaylist()
 	const removeMusicFromPlaylist = useRemoveMusicFromPlaylist()
 
-	// Mock duration for demo
-	const selectedDuration = selectedMusic?.duration
-		? selectedMusic.duration * 1000
-		: 180000
+	const selectAndPlay = useCallback(
+		(music: Music) => {
+			setSelectedMusic(music)
+			setScreen('Player')
+			lastPlayedIdRef.current = music.id
+			player.loadAndPlay(music)
+		},
+		[player],
+	)
 
-	const handleSeek = (value: number) => {
-		setProgress(value)
-		setCurrentTime(value * selectedDuration)
-	}
+	const progress =
+		player.durationMillis > 0
+			? player.positionMillis / player.durationMillis
+			: 0
 
-	const goNext = () => {
+	const handleSeek = useCallback(
+		(value: number) => {
+			const positionMillis = value * player.durationMillis
+			player.seek(positionMillis)
+		},
+		[player],
+	)
+
+	const goNext = useCallback(() => {
 		if (!selectedMusic) return
 		const musicsList = musics || []
 		const index = musicsList.findIndex((m) => m.id === selectedMusic.id)
 		const next = musicsList[(index + 1) % musicsList.length]
-		setSelectedMusic(next)
-		setIsPlaying(true)
-		setProgress(0)
-		setCurrentTime(0)
-	}
+		selectAndPlay(next)
+	}, [selectedMusic, musics, selectAndPlay])
 
-	const goPrev = () => {
+	const goPrev = useCallback(() => {
 		if (!selectedMusic) return
 		const musicsList = musics || []
 		const index = musicsList.findIndex((m) => m.id === selectedMusic.id)
-		const prev = musicsList[(index - 1 + musicsList.length) % musicsList.length]
-		setSelectedMusic(prev)
-		setIsPlaying(true)
-		setProgress(0)
-		setCurrentTime(0)
-	}
+		const prev =
+			musicsList[(index - 1 + musicsList.length) % musicsList.length]
+		selectAndPlay(prev)
+	}, [selectedMusic, musics, selectAndPlay])
 
 	// Group music by album
 	const groupByAlbum = (songs: Music[]) => {
@@ -127,20 +136,20 @@ export function AppContent() {
 									{selectedMusic.album}
 								</Text>
 
-								<ProgressBar
-									progress={progress}
-									currentTime={currentTime}
-									duration={selectedDuration}
-									onSeek={(value) => handleSeek(value)}
-								/>
+							<ProgressBar
+								progress={progress}
+								currentTime={player.positionMillis}
+								duration={player.durationMillis}
+								onSeek={handleSeek}
+							/>
 
-								<PlayerControls
-									isPlaying={isPlaying}
-									onPlay={() => setIsPlaying(true)}
-									onPause={() => setIsPlaying(false)}
-									onPrev={goPrev}
-									onNext={goNext}
-								/>
+							<PlayerControls
+								isPlaying={player.isPlaying}
+								onPlay={() => player.play()}
+								onPause={() => player.pause()}
+								onPrev={goPrev}
+								onNext={goNext}
+							/>
 							</View>
 						) : (
 							<View className="items-center">
@@ -182,10 +191,7 @@ export function AppContent() {
 								renderItem={({ item }) => (
 									<MusicCard
 										music={item}
-										onPress={() => {
-											setSelectedMusic(item)
-											setScreen('Player')
-										}}
+										onPress={() => selectAndPlay(item)}
 									/>
 								)}
 							/>
@@ -236,10 +242,7 @@ export function AppContent() {
 											onToggle={() =>
 												setExpandedAlbum(isExpanded ? null : albumName)
 											}
-											onSongPress={(music) => {
-												setSelectedMusic(music)
-												setScreen('Player')
-											}}
+										onSongPress={(music) => selectAndPlay(music)}
 										/>
 									)
 								}}
@@ -318,10 +321,7 @@ export function AppContent() {
 								renderItem={({ item }) => (
 									<MusicCard
 										music={item!}
-										onPress={() => {
-											setSelectedMusic(item!)
-											setScreen('Player')
-										}}
+										onPress={() => selectAndPlay(item!)}
 									/>
 								)}
 								ListEmptyComponent={

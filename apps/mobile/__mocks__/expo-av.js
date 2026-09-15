@@ -7,12 +7,14 @@ const mockSound = {
 	setOnPlaybackStatusUpdate: vi.fn(),
 }
 
-export const Audio = {
-	Sound: {
-		createAsync: vi.fn().mockResolvedValue({
-			sound: mockSound,
-			status: { isLoaded: true, isPlaying: false, positionMillis: 0, durationMillis: 0 },
-		}),
+module.exports = {
+	Audio: {
+		Sound: {
+			createAsync: vi.fn().mockResolvedValue({
+				sound: mockSound,
+				status: { isLoaded: true, isPlaying: false, positionMillis: 0, durationMillis: 0 },
+			}),
+		},
+		setAudioModeAsync: vi.fn().mockResolvedValue(undefined),
 	},
-	setAudioModeAsync: vi.fn().mockResolvedValue(undefined),
 }
