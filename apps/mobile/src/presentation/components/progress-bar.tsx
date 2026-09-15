@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, PanResponder } from 'react-native'
+import { PanResponder, Text, TouchableOpacity, View } from 'react-native'
 
 interface ProgressBarProps {
 	progress: number
@@ -7,7 +7,12 @@ interface ProgressBarProps {
 	onSeek: (value: number) => void
 }
 
-export function ProgressBar({ progress, currentTime, duration, onSeek }: ProgressBarProps) {
+export function ProgressBar({
+	progress,
+	currentTime,
+	duration,
+	onSeek,
+}: ProgressBarProps) {
 	const formatTime = (ms: number) => {
 		const totalSeconds = Math.floor(ms / 1000)
 		const minutes = Math.floor(totalSeconds / 60)
@@ -20,7 +25,10 @@ export function ProgressBar({ progress, currentTime, duration, onSeek }: Progres
 		onPanResponderGrant: () => {},
 		onPanResponderMove: (_, gesture) => {
 			const width = 300 // approximate width
-			const seekPercent = Math.max(0, Math.min(1, (gesture.dx + width / 2) / width))
+			const seekPercent = Math.max(
+				0,
+				Math.min(1, (gesture.dx + width / 2) / width),
+			)
 			onSeek(seekPercent)
 		},
 		onPanResponderRelease: () => {},
@@ -29,8 +37,12 @@ export function ProgressBar({ progress, currentTime, duration, onSeek }: Progres
 	return (
 		<View className="w-full px-4">
 			<View className="flex-row justify-between mb-1">
-				<Text className="text-xs text-text-secondary">{formatTime(currentTime)}</Text>
-				<Text className="text-xs text-text-secondary">{formatTime(duration)}</Text>
+				<Text className="text-xs text-text-secondary">
+					{formatTime(currentTime)}
+				</Text>
+				<Text className="text-xs text-text-secondary">
+					{formatTime(duration)}
+				</Text>
 			</View>
 			<View
 				{...panResponder.panHandlers}

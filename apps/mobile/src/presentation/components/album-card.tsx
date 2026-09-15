@@ -1,7 +1,7 @@
-import { View, TouchableOpacity, Text, FlatList } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import { FlatList, Text, TouchableOpacity, View } from 'react-native'
+import type { Music } from '../../infra/api/music-api'
 import { MusicCard } from './music-card'
-import { type Music } from '../../infra/api/music-api'
 
 interface AlbumCardProps {
 	albumName: string
@@ -11,7 +11,13 @@ interface AlbumCardProps {
 	onSongPress: (music: Music) => void
 }
 
-export function AlbumCard({ albumName, songs, isExpanded, onToggle, onSongPress }: AlbumCardProps) {
+export function AlbumCard({
+	albumName,
+	songs,
+	isExpanded,
+	onToggle,
+	onSongPress,
+}: AlbumCardProps) {
 	return (
 		<View className="mx-4 mb-4">
 			<TouchableOpacity onPress={onToggle} className="mb-3">
@@ -21,8 +27,12 @@ export function AlbumCard({ albumName, songs, isExpanded, onToggle, onSongPress 
 							<Ionicons name="musical-notes" size={32} color="#FACC16" />
 						</View>
 						<View>
-							<Text className="text-lg font-bold text-text-primary">{albumName}</Text>
-							<Text className="text-sm text-text-secondary">{songs.length} faixas</Text>
+							<Text className="text-lg font-bold text-text-primary">
+								{albumName}
+							</Text>
+							<Text className="text-sm text-text-secondary">
+								{songs.length} faixas
+							</Text>
 						</View>
 					</View>
 					<Ionicons

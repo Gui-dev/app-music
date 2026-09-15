@@ -1,17 +1,21 @@
-import { useState } from 'react'
-import { Text, TextInput, FlatList, TouchableOpacity, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
+import { useState } from 'react'
+import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import {
+	useAddMusicToPlaylist,
+	useCreatePlaylist,
+	useRemoveMusicFromPlaylist,
+} from './hooks/mutations/use-playlist-mutations'
 import { useMusics, useSearchMusics } from './hooks/queries/use-musics'
 import { usePlaylists } from './hooks/queries/use-playlists'
-import { useCreatePlaylist, useAddMusicToPlaylist, useRemoveMusicFromPlaylist } from './hooks/mutations/use-playlist-mutations'
-import { MusicCard } from './presentation/components/music-card'
+import { type Music, musicApi, type Playlist } from './infra/api/music-api'
 import { AlbumCard } from './presentation/components/album-card'
+import { BottomNav } from './presentation/components/bottom-nav'
+import { Equalizer } from './presentation/components/equalizer'
+import { MusicCard } from './presentation/components/music-card'
 import { PlayerControls } from './presentation/components/player-controls'
 import { ProgressBar } from './presentation/components/progress-bar'
-import { Equalizer } from './presentation/components/equalizer'
-import { BottomNav } from './presentation/components/bottom-nav'
-import { musicApi, type Music, type Playlist } from './infra/api/music-api'
 
 type Screen = 'Player' | 'Search' | 'Biblioteca' | 'Equalizer'
 
@@ -25,7 +29,11 @@ export function AppContent() {
 	const [newPlaylistName, setNewPlaylistName] = useState('')
 	const [expandedAlbum, setExpandedAlbum] = useState<string | null>(null)
 
-	const { data: musics = [], isLoading: musicsLoading, error: musicsError } = useMusics()
+	const {
+		data: musics = [],
+		isLoading: musicsLoading,
+		error: musicsError,
+	} = useMusics()
 	const { data: playlists, isLoading: playlistsLoading } = usePlaylists()
 	const searchResults = useSearchMusics(searchQuery)
 
@@ -34,7 +42,9 @@ export function AppContent() {
 	const removeMusicFromPlaylist = useRemoveMusicFromPlaylist()
 
 	// Mock duration for demo
-	const selectedDuration = selectedMusic?.duration ? selectedMusic.duration * 1000 : 180000
+	const selectedDuration = selectedMusic?.duration
+		? selectedMusic.duration * 1000
+		: 180000
 
 	const handleSeek = (value: number) => {
 		setProgress(value)
@@ -65,14 +75,17 @@ export function AppContent() {
 
 	// Group music by album
 	const groupByAlbum = (songs: Music[]) => {
-		const albums = songs.reduce((acc, song) => {
-			const albumKey = song.album || 'Unknown Album'
-			if (!acc[albumKey]) {
-				acc[albumKey] = []
-			}
-			acc[albumKey].push(song)
-			return acc
-		}, {} as Record<string, Music[]>)
+		const albums = songs.reduce(
+			(acc, song) => {
+				const albumKey = song.album || 'Unknown Album'
+				if (!acc[albumKey]) {
+					acc[albumKey] = []
+				}
+				acc[albumKey].push(song)
+				return acc
+			},
+			{} as Record<string, Music[]>,
+		)
 		return Object.entries(albums).sort(([a], [b]) => a.localeCompare(b))
 	}
 
@@ -91,9 +104,15 @@ export function AppContent() {
 								<View className="mb-6 h-64 w-64 items-center justify-center rounded-2xl bg-surface">
 									<Ionicons name="musical-notes" size={64} color="#FACC16" />
 								</View>
-								<Text className="text-xl font-bold text-text-primary text-center mb-1">{selectedMusic.title}</Text>
-								<Text className="text-base text-text-secondary text-center mb-0.5">{selectedMusic.artist}</Text>
-								<Text className="text-sm text-text-secondary text-center mb-6">{selectedMusic.album}</Text>
+								<Text className="text-xl font-bold text-text-primary text-center mb-1">
+									{selectedMusic.title}
+								</Text>
+								<Text className="text-base text-text-secondary text-center mb-0.5">
+									{selectedMusic.artist}
+								</Text>
+								<Text className="text-sm text-text-secondary text-center mb-6">
+									{selectedMusic.album}
+								</Text>
 
 								<ProgressBar
 									progress={progress}
@@ -115,8 +134,12 @@ export function AppContent() {
 								<View className="mb-6 h-64 w-64 items-center justify-center rounded-2xl bg-surface">
 									<Ionicons name="musical-notes" size={64} color="#FACC16" />
 								</View>
-								<Text className="text-xl font-bold text-text-primary">No music selected</Text>
-								<Text className="mt-1 text-base text-text-secondary">Select a song from Biblioteca</Text>
+								<Text className="text-xl font-bold text-text-primary">
+									No music selected
+								</Text>
+								<Text className="mt-1 text-base text-text-secondary">
+									Select a song from Biblioteca
+								</Text>
 							</View>
 						)}
 					</View>
@@ -159,8 +182,12 @@ export function AppContent() {
 					<View className="flex-1">
 						<View className="p-4">
 							<View className="flex-row items-center justify-between mb-4">
-								<Text className="text-2xl font-bold text-text-primary">Biblioteca</Text>
-								<Text className="text-sm text-text-secondary">{musicList.length} faixas • {albumGroups.length} álbuns</Text>
+								<Text className="text-2xl font-bold text-text-primary">
+									Biblioteca
+								</Text>
+								<Text className="text-sm text-text-secondary">
+									{musicList.length} faixas • {albumGroups.length} álbuns
+								</Text>
 							</View>
 						</View>
 						{musicsLoading ? (
@@ -183,7 +210,9 @@ export function AppContent() {
 											albumName={albumName}
 											songs={songs}
 											isExpanded={isExpanded}
-											onToggle={() => setExpandedAlbum(isExpanded ? null : albumName)}
+											onToggle={() =>
+												setExpandedAlbum(isExpanded ? null : albumName)
+											}
 											onSongPress={(music) => {
 												setSelectedMusic(music)
 												setScreen('Player')

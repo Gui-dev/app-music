@@ -1,5 +1,5 @@
-import { View, TouchableOpacity, Text } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import { Text, TouchableOpacity, View } from 'react-native'
 
 interface PlayerControlsProps {
 	isPlaying: boolean
@@ -26,7 +26,11 @@ export function PlayerControls({
 }: PlayerControlsProps) {
 	return (
 		<View className="flex-row items-center justify-center gap-6 py-4">
-			<TouchableOpacity onPress={onShuffle} className="p-2" disabled={!onShuffle}>
+			<TouchableOpacity
+				onPress={onShuffle}
+				className="p-2"
+				disabled={!onShuffle}
+			>
 				<Ionicons
 					name={(shuffleActive ? 'shuffle' : 'shuffle-outline') as any}
 					size={24}
@@ -38,8 +42,15 @@ export function PlayerControls({
 				<Ionicons name="chevron-back-circle" size={32} color="#FFFFFF" />
 			</TouchableOpacity>
 
-			<TouchableOpacity onPress={isPlaying ? onPause : onPlay} className="h-16 w-16 items-center justify-center rounded-full bg-primary">
-				<Ionicons name={isPlaying ? 'pause' : 'play'} size={32} color="#0D0D0D" />
+			<TouchableOpacity
+				onPress={isPlaying ? onPause : onPlay}
+				className="h-16 w-16 items-center justify-center rounded-full bg-primary"
+			>
+				<Ionicons
+					name={isPlaying ? 'pause' : 'play'}
+					size={32}
+					color="#0D0D0D"
+				/>
 			</TouchableOpacity>
 
 			<TouchableOpacity onPress={onNext} className="p-3">

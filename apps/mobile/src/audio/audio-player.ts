@@ -1,4 +1,8 @@
-type PlaybackCallback = (status: { isPlaying: boolean; positionMillis: number; durationMillis: number }) => void
+type PlaybackCallback = (status: {
+	isPlaying: boolean
+	positionMillis: number
+	durationMillis: number
+}) => void
 
 class AudioPlayerService {
 	private isLoaded = false
