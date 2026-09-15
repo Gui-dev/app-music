@@ -4,13 +4,15 @@ import {
 	useQueryClient,
 } from '@tanstack/react-query'
 import { act, renderHook, waitFor } from '@testing-library/react'
+import { HttpResponse, http } from 'msw'
 import type { ReactNode } from 'react'
-import { useCreatePlaylist } from './mutations/use-playlist-mutations'
-import { useAddMusicToPlaylist } from './mutations/use-playlist-mutations'
-import { usePlaylists } from './queries/use-playlists'
+import { mockMusics, mockPlaylists } from '../mocks/handlers'
 import { server } from '../mocks/server'
-import { http, HttpResponse } from 'msw'
-import { mockPlaylists, mockMusics } from '../mocks/handlers'
+import {
+	useAddMusicToPlaylist,
+	useCreatePlaylist,
+} from './mutations/use-playlist-mutations'
+import { usePlaylists } from './queries/use-playlists'
 
 function createQueryClient() {
 	return new QueryClient({
@@ -21,11 +23,7 @@ function createQueryClient() {
 function createWrapper(queryClient?: QueryClient) {
 	const client = queryClient ?? createQueryClient()
 	return function Wrapper({ children }: { children: ReactNode }) {
-		return (
-			<QueryClientProvider client={client}>
-				{children}
-			</QueryClientProvider>
-		)
+		return <QueryClientProvider client={client}>{children}</QueryClientProvider>
 	}
 }
 
@@ -54,7 +52,9 @@ describe('Optimistic Updates for Playlist Mutations', () => {
 			// After onSuccess, cache is invalidated and refetched
 			// The new playlist should be in the refetched data
 			await waitFor(() => {
-				const data = queryClient.getQueryData(['playlists']) as typeof mockPlaylists
+				const data = queryClient.getQueryData([
+					'playlists',
+				]) as typeof mockPlaylists
 				expect(data?.length).toBeGreaterThan(initialLength)
 			})
 		})
@@ -122,7 +122,9 @@ describe('Optimistic Updates for Playlist Mutations', () => {
 			})
 
 			// Before mutation, cache should not have the new playlist
-			const preMutationData = queryClient.getQueryData(['playlists']) as typeof mockPlaylists
+			const preMutationData = queryClient.getQueryData([
+				'playlists',
+			]) as typeof mockPlaylists
 			const hasNewPlaylist = preMutationData?.some(
 				(p) => p.name === 'Would Be Optimistic',
 			)
@@ -134,7 +136,9 @@ describe('Optimistic Updates for Playlist Mutations', () => {
 			})
 
 			await waitFor(() => {
-				const postMutationData = queryClient.getQueryData(['playlists']) as typeof mockPlaylists
+				const postMutationData = queryClient.getQueryData([
+					'playlists',
+				]) as typeof mockPlaylists
 				const hasAfter = postMutationData?.some(
 					(p) => p.name === 'Would Be Optimistic',
 				)

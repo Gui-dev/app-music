@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Platform } from 'react-native'
 
 const queryClient = new QueryClient({

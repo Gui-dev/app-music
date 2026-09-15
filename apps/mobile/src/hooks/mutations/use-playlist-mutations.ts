@@ -16,8 +16,13 @@ export function useAddMusicToPlaylist() {
 	const queryClient = useQueryClient()
 
 	return useMutation({
-		mutationFn: ({ playlistId, musicId }: { playlistId: string; musicId: string }) =>
-			musicApi.addMusicToPlaylist(playlistId, musicId),
+		mutationFn: ({
+			playlistId,
+			musicId,
+		}: {
+			playlistId: string
+			musicId: string
+		}) => musicApi.addMusicToPlaylist(playlistId, musicId),
 		onSuccess: (_, { playlistId }) => {
 			queryClient.invalidateQueries({ queryKey: ['playlists'] })
 			queryClient.invalidateQueries({ queryKey: ['playlists', playlistId] })
@@ -29,8 +34,13 @@ export function useRemoveMusicFromPlaylist() {
 	const queryClient = useQueryClient()
 
 	return useMutation({
-		mutationFn: ({ playlistId, musicId }: { playlistId: string; musicId: string }) =>
-			musicApi.removeMusicFromPlaylist(playlistId, musicId),
+		mutationFn: ({
+			playlistId,
+			musicId,
+		}: {
+			playlistId: string
+			musicId: string
+		}) => musicApi.removeMusicFromPlaylist(playlistId, musicId),
 		onSuccess: (_, { playlistId }) => {
 			queryClient.invalidateQueries({ queryKey: ['playlists'] })
 			queryClient.invalidateQueries({ queryKey: ['playlists', playlistId] })

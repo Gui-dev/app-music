@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { musicApi, type Music } from '../../infra/api/music-api'
+import { type Music, musicApi } from '../../infra/api/music-api'
 
 export function useMusics() {
 	return useQuery({

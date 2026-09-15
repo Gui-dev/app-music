@@ -4,16 +4,18 @@ import {
 	useQueryClient,
 } from '@tanstack/react-query'
 import { act, renderHook, waitFor } from '@testing-library/react'
+import { HttpResponse, http } from 'msw'
 import type { ReactNode } from 'react'
-import { usePlaylists } from './queries/use-playlists'
-import { useCreatePlaylist } from './mutations/use-playlist-mutations'
-import { useAddMusicToPlaylist } from './mutations/use-playlist-mutations'
-import { useRemoveMusicFromPlaylist } from './mutations/use-playlist-mutations'
-import { useScanDirectory } from './mutations/use-playlist-mutations'
-import { useMusics } from './queries/use-musics'
+import { mockMusics, mockPlaylists } from '../mocks/handlers'
 import { server } from '../mocks/server'
-import { http, HttpResponse } from 'msw'
-import { mockPlaylists, mockMusics } from '../mocks/handlers'
+import {
+	useAddMusicToPlaylist,
+	useCreatePlaylist,
+	useRemoveMusicFromPlaylist,
+	useScanDirectory,
+} from './mutations/use-playlist-mutations'
+import { useMusics } from './queries/use-musics'
+import { usePlaylists } from './queries/use-playlists'
 
 function createQueryClient() {
 	return new QueryClient({
@@ -25,9 +27,7 @@ function createWrapper() {
 	const queryClient = createQueryClient()
 	return function Wrapper({ children }: { children: ReactNode }) {
 		return (
-			<QueryClientProvider client={queryClient}>
-				{children}
-			</QueryClientProvider>
+			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 		)
 	}
 }
