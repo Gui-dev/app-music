@@ -14,6 +14,7 @@ type PlaybackCallback = (status: {
 class AudioPlayerService {
 	private player: AudioPlayer | null = null
 	private callback: PlaybackCallback | null = null
+	private finishedCallback: (() => void) | null = null
 	private listener: ReturnType<AudioPlayer['addListener']> | null = null
 
 	async load(uri: string): Promise<void> {
@@ -67,6 +68,10 @@ class AudioPlayerService {
 		this.callback = callback
 	}
 
+	onFinished(callback: () => void): void {
+		this.finishedCallback = callback
+	}
+
 	async unload(): Promise<void> {
 		this.removeListener()
 		if (this.player) {
@@ -84,6 +89,9 @@ class AudioPlayerService {
 					positionMillis: status.currentTime * 1000,
 					durationMillis: (status.duration ?? 0) * 1000,
 				})
+				if (status.didJustFinish) {
+					this.finishedCallback?.()
+				}
 			}
 		})
 	}

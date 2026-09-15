@@ -13,6 +13,7 @@ vi.mock('../audio/audio-player', () => ({
 		setRate: vi.fn().mockResolvedValue(undefined),
 		unload: vi.fn().mockResolvedValue(undefined),
 		onPlaybackStatusUpdate: vi.fn(),
+		onFinished: vi.fn(),
 	},
 }))
 

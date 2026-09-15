@@ -93,6 +93,10 @@ export function AppContent() {
 		selectAndPlay(prev)
 	}, [selectedMusic, musics, selectAndPlay])
 
+	useEffect(() => {
+		player.setOnFinished(goNext)
+	}, [player, goNext])
+
 	// Group music by album
 	const groupByAlbum = (songs: Music[]) => {
 		const albums = songs.reduce(

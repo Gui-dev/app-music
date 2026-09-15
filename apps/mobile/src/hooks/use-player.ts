@@ -28,6 +28,13 @@ export function usePlayer(playlist?: Music[]) {
 		playlistRef.current = list
 	}, [])
 
+	const finishedRef = useRef<(() => void) | null>(null)
+
+	const setOnFinished = useCallback((cb: () => void) => {
+		finishedRef.current = cb
+		audioPlayer.onFinished(() => cb())
+	}, [])
+
 	useEffect(() => {
 		audioPlayer.onPlaybackStatusUpdate((status) => {
 			setState((prev) => ({
@@ -99,5 +106,6 @@ export function usePlayer(playlist?: Music[]) {
 		setRate,
 		prefetchNext,
 		setPlaylist,
+		setOnFinished,
 	}
 }
