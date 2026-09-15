@@ -7,9 +7,10 @@
 		"check": "biome check --write",
 		"test": "pnpm --filter @app-music/server test && pnpm --filter @app-music/mobile test",
 		"typecheck": "pnpm --filter @app-music/server typecheck && pnpm --filter @app-music/mobile typecheck",
-		"dev": "pnpm --filter @app-music/server dev & pnpm --filter @app-music/mobile dev",
+		"dev": "pnpm --filter @app-music/server dev & pnpm --filter @app-music/mobile dev --tunnel",
 		"dev:server": "pnpm --filter @app-music/server dev",
-		"dev:mobile": "pnpm --filter @app-music/mobile dev"
+		"dev:mobile": "pnpm --filter @app-music/mobile dev",
+		"dev:mobile:tunnel": "pnpm --filter @app-music/mobile dev --tunnel"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.0",
