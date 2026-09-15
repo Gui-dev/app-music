@@ -17,7 +17,7 @@ class AudioPlayerService {
 			this.player.remove()
 		}
 
-		this.player = createPlayer({ uri }, { updateInterval: 200 })
+		this.player = createPlayer({ uri }, { updateInterval: 1000 })
 		this.addListener()
 	}
 

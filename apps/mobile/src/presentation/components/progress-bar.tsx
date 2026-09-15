@@ -1,4 +1,5 @@
-import { PanResponder, Text, TouchableOpacity, View } from 'react-native'
+import { useMemo } from 'react'
+import { PanResponder, Text, View } from 'react-native'
 
 interface ProgressBarProps {
 	progress: number
@@ -20,19 +21,23 @@ export function ProgressBar({
 		return `${minutes}:${String(seconds).padStart(2, '0')}`
 	}
 
-	const panResponder = PanResponder.create({
-		onStartShouldSetPanResponder: () => true,
-		onPanResponderGrant: () => {},
-		onPanResponderMove: (_, gesture) => {
-			const width = 300 // approximate width
-			const seekPercent = Math.max(
-				0,
-				Math.min(1, (gesture.dx + width / 2) / width),
-			)
-			onSeek(seekPercent)
-		},
-		onPanResponderRelease: () => {},
-	})
+	const panResponder = useMemo(
+		() =>
+			PanResponder.create({
+				onStartShouldSetPanResponder: () => true,
+				onPanResponderGrant: () => {},
+				onPanResponderMove: (_, gesture) => {
+					const width = 300
+					const seekPercent = Math.max(
+						0,
+						Math.min(1, (gesture.dx + width / 2) / width),
+					)
+					onSeek(seekPercent)
+				},
+				onPanResponderRelease: () => {},
+			}),
+		[onSeek],
+	)
 
 	return (
 		<View className="w-full px-4">
