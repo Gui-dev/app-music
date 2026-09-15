@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import { FlatList, Text, TouchableOpacity, View } from 'react-native'
 import type { Music } from '../../infra/api/music-api'
+import { CoverArt } from './cover-art'
 import { MusicCard } from './music-card'
 
 interface AlbumCardProps {
@@ -18,14 +19,14 @@ export function AlbumCard({
 	onToggle,
 	onSongPress,
 }: AlbumCardProps) {
+	const albumCoverUrl = songs[0]?.coverUrl ?? null
+
 	return (
 		<View className="mx-4 mb-4">
 			<TouchableOpacity onPress={onToggle} className="mb-3">
 				<View className="flex-row items-center justify-between">
 					<View className="flex-row items-center gap-3">
-						<View className="h-16 w-16 rounded-lg bg-surface-hover items-center justify-center">
-							<Ionicons name="musical-notes" size={32} color="#FACC16" />
-						</View>
+						<CoverArt coverUrl={albumCoverUrl} size={64} />
 						<View>
 							<Text className="text-lg font-bold text-text-primary">
 								{albumName}

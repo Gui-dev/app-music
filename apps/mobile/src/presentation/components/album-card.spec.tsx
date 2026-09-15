@@ -133,15 +133,9 @@ describe('AlbumCard', () => {
 		expect(wrapper).toHaveClass('mb-4')
 	})
 
-	it('applies album placeholder styles', () => {
+	it('renders cover art for album', () => {
 		const { container } = render(<AlbumCard {...defaultProps} />)
-
-		const placeholder = container.querySelector(
-			'[class*="h-16"][class*="w-16"]',
-		)
-		expect(placeholder).toBeTruthy()
-		expect(placeholder).toHaveClass('rounded-lg')
-		expect(placeholder).toHaveClass('bg-surface-hover')
+		expect(container.textContent).toContain('musical-notes')
 	})
 
 	it('renders album name with bold text', () => {

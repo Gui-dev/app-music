@@ -7,6 +7,7 @@ const mockMusic = {
 	artist: 'Test Artist',
 	album: 'Test Album',
 	duration: 180,
+	coverUrl: null,
 }
 
 describe('MusicCard', () => {

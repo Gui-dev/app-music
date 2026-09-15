@@ -1,5 +1,5 @@
-import { Ionicons } from '@expo/vector-icons'
 import { Text, TouchableOpacity, View } from 'react-native'
+import { CoverArt } from './cover-art'
 
 interface Music {
 	id: string
@@ -7,6 +7,7 @@ interface Music {
 	artist: string
 	album: string
 	duration: number | null
+	coverUrl: string | null
 }
 
 interface MusicCardProps {
@@ -25,9 +26,7 @@ export function MusicCard({
 			onPress={onPress}
 			className="mx-4 mb-2 flex-row items-center rounded-lg bg-surface p-3"
 		>
-			<View className="mr-3 h-12 w-12 items-center justify-center rounded-lg bg-surface-hover">
-				<Ionicons name="musical-notes" size={24} color="#FACC16" />
-			</View>
+			<CoverArt coverUrl={music.coverUrl} size={48} className="mr-3" />
 			<View className="flex-1">
 				<Text className="text-base font-semibold text-text-primary">
 					{music.title}

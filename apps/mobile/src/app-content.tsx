@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons'
 import { useState } from 'react'
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -12,6 +11,7 @@ import { usePlaylists } from './hooks/queries/use-playlists'
 import { type Music, musicApi, type Playlist } from './infra/api/music-api'
 import { AlbumCard } from './presentation/components/album-card'
 import { BottomNav } from './presentation/components/bottom-nav'
+import { CoverArt } from './presentation/components/cover-art'
 import { Equalizer } from './presentation/components/equalizer'
 import { MusicCard } from './presentation/components/music-card'
 import { PlayerControls } from './presentation/components/player-controls'
@@ -101,9 +101,11 @@ export function AppContent() {
 					<View className="flex-1 items-center justify-center p-6">
 						{selectedMusic ? (
 							<View className="w-full max-w-md items-center">
-								<View className="mb-6 h-64 w-64 items-center justify-center rounded-2xl bg-surface">
-									<Ionicons name="musical-notes" size={64} color="#FACC16" />
-								</View>
+								<CoverArt
+									coverUrl={selectedMusic.coverUrl}
+									size={256}
+									className="mb-6 rounded-2xl"
+								/>
 								<Text className="text-xl font-bold text-text-primary text-center mb-1">
 									{selectedMusic.title}
 								</Text>
@@ -131,9 +133,11 @@ export function AppContent() {
 							</View>
 						) : (
 							<View className="items-center">
-								<View className="mb-6 h-64 w-64 items-center justify-center rounded-2xl bg-surface">
-									<Ionicons name="musical-notes" size={64} color="#FACC16" />
-								</View>
+								<CoverArt
+									coverUrl={null}
+									size={256}
+									className="mb-6 rounded-2xl"
+								/>
 								<Text className="text-xl font-bold text-text-primary">
 									No music selected
 								</Text>
