@@ -1,4 +1,4 @@
-import { Audio } from 'expo-av'
+import { createAudioPlayer as createPlayer, type AudioPlayer } from 'expo-audio'
 
 type PlaybackCallback = (status: {
 	isPlaying: boolean
@@ -7,49 +7,36 @@ type PlaybackCallback = (status: {
 }) => void
 
 class AudioPlayerService {
-	private sound: Audio.Sound | null = null
+	private player: AudioPlayer | null = null
 	private callback: PlaybackCallback | null = null
+	private listener: ReturnType<AudioPlayer['addListener']> | null = null
 
 	async load(uri: string): Promise<void> {
-		if (this.sound) {
-			await this.sound.unloadAsync()
+		if (this.player) {
+			this.removeListener()
+			this.player.remove()
 		}
 
-		const { sound } = await Audio.Sound.createAsync(
-			{ uri },
-			{ shouldPlay: false },
-			(status) => {
-				if (status.isLoaded) {
-					this.callback?.({
-						isPlaying: status.isPlaying,
-						positionMillis: status.positionMillis,
-						durationMillis: status.durationMillis ?? 0,
-					})
-				}
-			},
-		)
-
-		this.sound = sound
+		this.player = createPlayer({ uri }, { updateInterval: 200 })
+		this.addListener()
 	}
 
 	async play(): Promise<void> {
-		if (!this.sound) return
-		await this.sound.playAsync()
+		this.player?.play()
 	}
 
 	async pause(): Promise<void> {
-		if (!this.sound) return
-		await this.sound.pauseAsync()
+		this.player?.pause()
 	}
 
 	async seek(positionMillis: number): Promise<void> {
-		if (!this.sound) return
-		await this.sound.setPositionAsync(positionMillis)
+		if (!this.player) return
+		await this.player.seekTo(positionMillis / 1000)
 	}
 
 	async setRate(rate: number): Promise<void> {
-		if (!this.sound) return
-		await this.sound.setRateAsync(rate, true)
+		if (!this.player) return
+		this.player.setPlaybackRate(rate)
 	}
 
 	onPlaybackStatusUpdate(callback: PlaybackCallback): void {
@@ -57,10 +44,29 @@ class AudioPlayerService {
 	}
 
 	async unload(): Promise<void> {
-		if (this.sound) {
-			await this.sound.unloadAsync()
-			this.sound = null
+		this.removeListener()
+		if (this.player) {
+			this.player.remove()
+			this.player = null
 		}
+	}
+
+	private addListener(): void {
+		if (!this.player) return
+		this.listener = this.player.addListener('playbackStatusUpdate', (status) => {
+			if (status.isLoaded) {
+				this.callback?.({
+					isPlaying: status.playing,
+					positionMillis: status.currentTime * 1000,
+					durationMillis: (status.duration ?? 0) * 1000,
+				})
+			}
+		})
+	}
+
+	private removeListener(): void {
+		this.listener?.remove()
+		this.listener = null
 	}
 }
 

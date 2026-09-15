@@ -24,7 +24,7 @@ export default defineConfig({
 				'react-native-css-interop.js',
 			),
 			'expo-constants': resolve(mockDir, 'expo-constants.js'),
-			'expo-av': resolve(mockDir, 'expo-av.js'),
+			'expo-audio': resolve(mockDir, 'expo-audio.js'),
 		},
 	},
 	test: {
