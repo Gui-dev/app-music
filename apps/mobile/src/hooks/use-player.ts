@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { audioPlayer } from '../audio/audio-player'
-import { musicApi, type Music } from '../infra/api/music-api'
+import { type Music, musicApi } from '../infra/api/music-api'
 
 interface PlayerState {
 	currentMusic: Music | null
