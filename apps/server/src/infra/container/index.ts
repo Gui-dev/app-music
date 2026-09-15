@@ -6,6 +6,7 @@ import { CreatePlaylist } from '@/domain/usecases/playlist/create-playlist'
 import { ListPlaylists } from '@/domain/usecases/playlist/list-playlists'
 import { RemoveMusicFromPlaylist } from '@/domain/usecases/playlist/remove-music-from-playlist'
 import { type AppDatabase, createDatabase } from '../database/database'
+import { CoverCacheRepository } from '../repositories/cover-cache-repository'
 import { MusicRepository } from '../repositories/music-repository'
 import { PlaylistRepository } from '../repositories/playlist-repository'
 import { CoverService } from '../services/cover-service'
@@ -16,6 +17,7 @@ export interface Container {
 	db: AppDatabase
 	musicRepository: MusicRepository
 	playlistRepository: PlaylistRepository
+	coverCacheRepository: CoverCacheRepository
 	fileStorage: LocalFileStorage
 	coverService: CoverService
 	scannerService: ScannerService
@@ -33,8 +35,12 @@ export function createContainer(): Container {
 
 	const musicRepository = new MusicRepository(db)
 	const playlistRepository = new PlaylistRepository(db)
+	const coverCacheRepository = new CoverCacheRepository(db)
 	const fileStorage = new LocalFileStorage(process.env.MUSIC_PATH || '/music')
-	const coverService = new CoverService(process.env.LASTFM_API_KEY || '')
+	const coverService = new CoverService(
+		process.env.LASTFM_API_KEY || '',
+		coverCacheRepository,
+	)
 	const scannerService = new ScannerService()
 
 	const listMusics = new ListMusics(musicRepository)
@@ -54,6 +60,7 @@ export function createContainer(): Container {
 		db,
 		musicRepository,
 		playlistRepository,
+		coverCacheRepository,
 		fileStorage,
 		coverService,
 		scannerService,

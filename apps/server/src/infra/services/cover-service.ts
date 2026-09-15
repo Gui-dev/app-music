@@ -1,11 +1,33 @@
 import type { ICoverService } from '@/domain/contracts/services/i-cover-service'
+import type { CoverCacheRepository } from '../repositories/cover-cache-repository'
 
 const LASTFM_API_URL = 'https://ws.audioscrobbler.com/2.0/'
 
 export class CoverService implements ICoverService {
-	constructor(private readonly apiKey: string) {}
+	constructor(
+		private readonly apiKey: string,
+		private readonly cacheRepository: CoverCacheRepository,
+	) {}
 
 	async getCover(artist: string, album: string): Promise<string | null> {
+		const cached = await this.cacheRepository.findByArtistAlbum(artist, album)
+		if (cached) {
+			return cached
+		}
+
+		const coverUrl = await this.fetchFromLastFm(artist, album)
+
+		if (coverUrl) {
+			await this.cacheRepository.save(artist, album, coverUrl)
+		}
+
+		return coverUrl
+	}
+
+	private async fetchFromLastFm(
+		artist: string,
+		album: string,
+	): Promise<string | null> {
 		try {
 			const params = new URLSearchParams({
 				method: 'album.getinfo',
