@@ -50,7 +50,7 @@
 ## Frontend
 
 - v Initialize Expo project with NativeWind
-- x Configure Zod for frontend schema validation
+- v Configure Zod for frontend schema validation
 - v Set up React Navigation (stack + tab navigators)
 - v Create `AudioPlayer` service using `expo-av`
 - v Create `MusicApi` service with axios

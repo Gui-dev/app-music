@@ -1,6 +1,14 @@
 import axios from 'axios'
 import Constants from 'expo-constants'
 import { Platform } from 'react-native'
+import {
+	MusicSchema,
+	PlaylistSchema,
+	ScanResultSchema,
+	type Music,
+	type Playlist,
+	type ScanResult,
+} from '@shared/schemas'
 
 const defaultApiBase = Platform.select({
 	// Android emulators access the host machine through this special address.
@@ -18,40 +26,22 @@ const api = axios.create({
 	baseURL: API_BASE,
 })
 
-export interface Music {
-	id: string
-	title: string
-	artist: string
-	album: string
-	duration: number | null
-	filePath: string
-	coverUrl: string | null
-	trackNumber: number | null
-	year: number | null
-}
-
-export interface Playlist {
-	id: string
-	name: string
-	musicIds: string[]
-	createdAt: string
-	updatedAt: string
-}
+export type { Music, Playlist, ScanResult }
 
 export const musicApi = {
 	async listMusics(): Promise<Music[]> {
-		const { data } = await api.get<Music[]>('/music')
-		return data
+		const { data } = await api.get('/music')
+		return MusicSchema.array().parse(data)
 	},
 
 	async getMusic(id: string): Promise<Music> {
-		const { data } = await api.get<Music>(`/music/${id}`)
-		return data
+		const { data } = await api.get(`/music/${id}`)
+		return MusicSchema.parse(data)
 	},
 
 	async searchMusics(query: string): Promise<Music[]> {
-		const { data } = await api.get<Music[]>('/search', { params: { q: query } })
-		return data
+		const { data } = await api.get('/search', { params: { q: query } })
+		return MusicSchema.array().parse(data)
 	},
 
 	getStreamUrl(id: string): string {
@@ -63,13 +53,13 @@ export const musicApi = {
 	},
 
 	async listPlaylists(): Promise<Playlist[]> {
-		const { data } = await api.get<Playlist[]>('/playlists')
-		return data
+		const { data } = await api.get('/playlists')
+		return PlaylistSchema.array().parse(data)
 	},
 
 	async createPlaylist(name: string): Promise<Playlist> {
-		const { data } = await api.post<Playlist>('/playlists', { name })
-		return data
+		const { data } = await api.post('/playlists', { name })
+		return PlaylistSchema.parse(data)
 	},
 
 	async addMusicToPlaylist(playlistId: string, musicId: string): Promise<void> {
@@ -83,10 +73,8 @@ export const musicApi = {
 		await api.delete(`/playlists/${playlistId}/remove/${musicId}`)
 	},
 
-	async scanDirectory(
-		path?: string,
-	): Promise<{ count: number; message: string }> {
+	async scanDirectory(path?: string): Promise<ScanResult> {
 		const { data } = await api.post('/scan', { path })
-		return data
+		return ScanResultSchema.parse(data)
 	},
 }

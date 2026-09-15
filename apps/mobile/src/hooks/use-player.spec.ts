@@ -28,7 +28,6 @@ const mockMusic: Music = {
 	artist: 'Test Artist',
 	album: 'Test Album',
 	duration: 180000,
-	filePath: '/path/song.mp3',
 	coverUrl: null,
 	trackNumber: 1,
 	year: 2024,
