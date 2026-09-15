@@ -67,6 +67,8 @@ describe('AppContent', () => {
 			data: mockMusics,
 			isLoading: false,
 			error: null,
+			refetch: vi.fn(),
+			isRefetching: false,
 		} as unknown as ReturnType<typeof useMusics.useMusics>)
 		vi.mocked(useMusics.useSearchMusics).mockReturnValue({
 			data: [],
@@ -98,6 +100,7 @@ describe('AppContent', () => {
 		expect(result.getByRole('button', { name: /Player/ })).toBeTruthy()
 		expect(result.getByRole('button', { name: /Search/ })).toBeTruthy()
 		expect(result.getByRole('button', { name: /Biblioteca/ })).toBeTruthy()
+		expect(result.getByRole('button', { name: /Playlists/ })).toBeTruthy()
 		expect(result.getByRole('button', { name: /Equalizador/ })).toBeTruthy()
 	})
 
@@ -150,6 +153,8 @@ describe('AppContent', () => {
 			data: [],
 			isLoading: false,
 			error: null,
+			refetch: vi.fn(),
+			isRefetching: false,
 		} as unknown as ReturnType<typeof useMusics.useMusics>)
 
 		const result = renderWithQuery(<AppContent />)
@@ -162,7 +167,9 @@ describe('AppContent', () => {
 			data: undefined,
 			isLoading: true,
 			error: null,
-		} as ReturnType<typeof useMusics.useMusics>)
+			refetch: vi.fn(),
+			isRefetching: false,
+		} as unknown as ReturnType<typeof useMusics.useMusics>)
 
 		const result = renderWithQuery(<AppContent />)
 		clickNav(result, 'Biblioteca')
@@ -173,5 +180,59 @@ describe('AppContent', () => {
 		const result = renderWithQuery(<AppContent />)
 		clickNav(result, 'Equalizador')
 		expect(result.getByText('Presets')).toBeTruthy()
+	})
+
+	it('navigates to Playlists screen and shows header', () => {
+		const result = renderWithQuery(<AppContent />)
+		clickNav(result, 'Playlists')
+		const headers = result.getAllByText('Playlists')
+		expect(headers.length).toBeGreaterThanOrEqual(2)
+	})
+
+	it('shows playlist count in header', () => {
+		const result = renderWithQuery(<AppContent />)
+		clickNav(result, 'Playlists')
+		expect(result.getByText('1 playlists')).toBeTruthy()
+	})
+
+	it('shows playlist name and song count', () => {
+		const result = renderWithQuery(<AppContent />)
+		clickNav(result, 'Playlists')
+		expect(result.getByText('My Playlist')).toBeTruthy()
+		expect(result.getByText('1 songs')).toBeTruthy()
+	})
+
+	it('shows create playlist input and button', () => {
+		const result = renderWithQuery(<AppContent />)
+		clickNav(result, 'Playlists')
+		expect(result.getByPlaceholderText('New playlist name...')).toBeTruthy()
+		expect(result.getByText('Create')).toBeTruthy()
+	})
+
+	it('shows empty state when no playlists', () => {
+		vi.mocked(usePlaylists.usePlaylists).mockReturnValue({
+			data: [],
+			isLoading: false,
+		} as unknown as ReturnType<typeof usePlaylists.usePlaylists>)
+
+		const result = renderWithQuery(<AppContent />)
+		clickNav(result, 'Playlists')
+		expect(result.getByText('No playlists yet')).toBeTruthy()
+	})
+
+	it('navigates to playlist detail when playlist pressed', () => {
+		const result = renderWithQuery(<AppContent />)
+		clickNav(result, 'Playlists')
+		fireEvent.click(result.getByText('My Playlist'))
+		expect(result.getByText('← Back to playlists')).toBeTruthy()
+		expect(result.getByText('1 songs')).toBeTruthy()
+	})
+
+	it('returns to playlists list when back pressed', () => {
+		const result = renderWithQuery(<AppContent />)
+		clickNav(result, 'Playlists')
+		fireEvent.click(result.getByText('My Playlist'))
+		fireEvent.click(result.getByText('← Back to playlists'))
+		expect(result.getByText('My Playlist')).toBeTruthy()
 	})
 })

@@ -1,5 +1,13 @@
+import { Ionicons } from '@expo/vector-icons'
 import { useState } from 'react'
-import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import {
+	FlatList,
+	RefreshControl,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {
 	useAddMusicToPlaylist,
@@ -17,7 +25,7 @@ import { MusicCard } from './presentation/components/music-card'
 import { PlayerControls } from './presentation/components/player-controls'
 import { ProgressBar } from './presentation/components/progress-bar'
 
-type Screen = 'Player' | 'Search' | 'Biblioteca' | 'Equalizer'
+type Screen = 'Player' | 'Search' | 'Biblioteca' | 'Equalizer' | 'Playlists'
 
 export function AppContent() {
 	const [screen, setScreen] = useState<Screen>('Player')
@@ -28,11 +36,14 @@ export function AppContent() {
 	const [currentTime, setCurrentTime] = useState(0)
 	const [newPlaylistName, setNewPlaylistName] = useState('')
 	const [expandedAlbum, setExpandedAlbum] = useState<string | null>(null)
+	const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null)
 
 	const {
 		data: musics = [],
 		isLoading: musicsLoading,
 		error: musicsError,
+		refetch: refetchMusics,
+		isRefetching: musicsRefetching,
 	} = useMusics()
 	const { data: playlists, isLoading: playlistsLoading } = usePlaylists()
 	const searchResults = useSearchMusics(searchQuery)
@@ -203,9 +214,17 @@ export function AppContent() {
 								<Text className="text-text-secondary">No music found</Text>
 							</View>
 						) : (
-							<FlatList
-								data={albumGroups}
-								keyExtractor={([album]) => album}
+						<FlatList
+							data={albumGroups}
+							keyExtractor={([album]) => album}
+							refreshControl={
+								<RefreshControl
+									refreshing={musicsRefetching}
+									onRefresh={refetchMusics}
+									tintColor="#FACC16"
+									colors={['#FACC16']}
+								/>
+							}
 								renderItem={({ item }) => {
 									const [albumName, songs] = item
 									const isExpanded = expandedAlbum === albumName
@@ -229,7 +248,119 @@ export function AppContent() {
 					</View>
 				)}
 
-				{screen === 'Equalizer' && (
+				{screen === 'Playlists' && (
+				<View className="flex-1">
+					<View className="p-4">
+						<View className="flex-row items-center justify-between mb-4">
+							<Text className="text-2xl font-bold text-text-primary">
+								Playlists
+							</Text>
+							<Text className="text-sm text-text-secondary">
+								{playlists?.length || 0} playlists
+							</Text>
+						</View>
+						<View className="flex-row mb-4">
+							<TextInput
+								className="flex-1 rounded-lg bg-surface px-4 py-3 text-text-primary mr-2"
+								placeholder="New playlist name..."
+								placeholderTextColor="#404047"
+								value={newPlaylistName}
+								onChangeText={setNewPlaylistName}
+							/>
+							<TouchableOpacity
+								className="rounded-lg bg-primary px-4 py-3"
+								onPress={() => {
+									if (newPlaylistName.trim()) {
+										createPlaylist.mutate(newPlaylistName.trim(), {
+											onSuccess: () => setNewPlaylistName(''),
+										})
+									}
+								}}
+								disabled={!newPlaylistName.trim() || createPlaylist.isPending}
+							>
+								<Text className="font-semibold text-bg">
+									{createPlaylist.isPending ? '...' : 'Create'}
+								</Text>
+							</TouchableOpacity>
+						</View>
+					</View>
+					{playlistsLoading ? (
+						<View className="flex-1 items-center justify-center">
+							<Text className="text-text-secondary">Loading...</Text>
+						</View>
+					) : !playlists || playlists.length === 0 ? (
+						<View className="flex-1 items-center justify-center">
+							<Text className="text-text-secondary">No playlists yet</Text>
+						</View>
+					) : selectedPlaylist ? (
+						<View className="flex-1">
+							<View className="px-4 mb-4">
+								<TouchableOpacity
+									onPress={() => setSelectedPlaylist(null)}
+									className="mb-2"
+								>
+									<Text className="text-primary">
+										← Back to playlists
+									</Text>
+								</TouchableOpacity>
+								<Text className="text-xl font-bold text-text-primary">
+									{selectedPlaylist.name}
+								</Text>
+								<Text className="text-sm text-text-secondary">
+									{selectedPlaylist.musicIds.length} songs
+								</Text>
+							</View>
+							<FlatList
+								data={selectedPlaylist.musicIds
+									.map((id) => musicList.find((m) => m.id === id))
+									.filter(Boolean)}
+								keyExtractor={(item) => item!.id}
+								renderItem={({ item }) => (
+									<MusicCard
+										music={item!}
+										onPress={() => {
+											setSelectedMusic(item!)
+											setScreen('Player')
+										}}
+									/>
+								)}
+								ListEmptyComponent={
+									<View className="items-center py-8">
+										<Text className="text-text-secondary">
+											No songs in this playlist
+										</Text>
+									</View>
+								}
+							/>
+						</View>
+					) : (
+						<FlatList
+							data={playlists}
+							keyExtractor={(item) => item.id}
+							renderItem={({ item }) => (
+								<TouchableOpacity
+									className="mx-4 mb-3 rounded-lg bg-surface p-4"
+									onPress={() => setSelectedPlaylist(item)}
+								>
+									<View className="flex-row items-center justify-between">
+										<View className="flex-1">
+											<Text className="text-base font-semibold text-text-primary">
+												{item.name}
+											</Text>
+											<Text className="mt-1 text-sm text-text-secondary">
+												{item.musicIds.length} songs
+											</Text>
+										</View>
+										<Ionicons name="chevron-forward" size={20} color="#404047" />
+									</View>
+								</TouchableOpacity>
+							)}
+						/>
+					)}
+				</View>
+			)}
+
+			{screen === 'Equalizer' && (
 					<View className="flex-1">
 						<Equalizer />
 					</View>
