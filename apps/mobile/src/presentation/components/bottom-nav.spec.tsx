@@ -16,6 +16,7 @@ describe('BottomNav', () => {
 		expect(getByText('Player')).toBeTruthy()
 		expect(getByText('Search')).toBeTruthy()
 		expect(getByText('Biblioteca')).toBeTruthy()
+		expect(getByText('Playlists')).toBeTruthy()
 		expect(getByText('Equalizador')).toBeTruthy()
 	})
 
@@ -59,6 +60,14 @@ describe('BottomNav', () => {
 		expect(getByTestId('icon-options')).toBeTruthy()
 	})
 
+	it('shows solid icon for active Playlists tab', () => {
+		const { getByTestId } = render(
+			<BottomNav screen="Playlists" setScreen={setScreen} />,
+		)
+
+		expect(getByTestId('icon-list')).toBeTruthy()
+	})
+
 	it('shows yellow color for active tab icon', () => {
 		const { getByTestId } = render(
 			<BottomNav screen="Player" setScreen={setScreen} />,
@@ -97,7 +106,7 @@ describe('BottomNav', () => {
 		const labels = container.querySelectorAll(
 			'[class*="text-text-secondary"][class*="text-xs"]',
 		)
-		expect(labels.length).toBe(3)
+		expect(labels.length).toBe(4)
 	})
 
 	it('calls setScreen with Player when Player tab pressed', () => {
@@ -136,6 +145,15 @@ describe('BottomNav', () => {
 		expect(setScreen).toHaveBeenCalledWith('Equalizer')
 	})
 
+	it('calls setScreen with Playlists when Playlists tab pressed', () => {
+		const { getByText } = render(
+			<BottomNav screen="Player" setScreen={setScreen} />,
+		)
+
+		fireEvent.click(getByText('Playlists'))
+		expect(setScreen).toHaveBeenCalledWith('Playlists')
+	})
+
 	it('applies correct container styles', () => {
 		const { container } = render(
 			<BottomNav screen="Player" setScreen={setScreen} />,
@@ -157,7 +175,7 @@ describe('BottomNav', () => {
 		)
 
 		const tabs = container.querySelectorAll('[class*="items-center"]')
-		expect(tabs.length).toBe(4)
+		expect(tabs.length).toBe(5)
 	})
 
 	it('applies mt-1 and text-xs to tab labels', () => {
@@ -168,6 +186,6 @@ describe('BottomNav', () => {
 		const labels = container.querySelectorAll(
 			'[class*="mt-1"][class*="text-xs"]',
 		)
-		expect(labels.length).toBe(4)
+		expect(labels.length).toBe(5)
 	})
 })

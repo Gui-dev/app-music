@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import { Text, TouchableOpacity, View } from 'react-native'
 
-type Screen = 'Player' | 'Search' | 'Biblioteca' | 'Equalizer'
+type Screen = 'Player' | 'Search' | 'Biblioteca' | 'Equalizer' | 'Playlists'
 
 interface BottomNavProps {
 	screen: Screen
@@ -54,6 +54,21 @@ export function BottomNav({ screen, setScreen }: BottomNavProps) {
 					className={`mt-1 text-xs ${screen === 'Biblioteca' ? 'text-primary' : 'text-text-secondary'}`}
 				>
 					Biblioteca
+				</Text>
+			</TouchableOpacity>
+			<TouchableOpacity
+				onPress={() => setScreen('Playlists')}
+				className="items-center"
+			>
+				<Ionicons
+					name={screen === 'Playlists' ? 'list' : 'list-outline'}
+					size={24}
+					color={screen === 'Playlists' ? '#FACC16' : '#404047'}
+				/>
+				<Text
+					className={`mt-1 text-xs ${screen === 'Playlists' ? 'text-primary' : 'text-text-secondary'}`}
+				>
+					Playlists
 				</Text>
 			</TouchableOpacity>
 			<TouchableOpacity
