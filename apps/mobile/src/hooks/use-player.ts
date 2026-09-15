@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { audioPlayer } from '../audio/audio-player'
 import { type Music, musicApi } from '../infra/api/music-api'
 
@@ -11,7 +11,7 @@ interface PlayerState {
 	isLoading: boolean
 }
 
-export function usePlayer() {
+export function usePlayer(playlist?: Music[]) {
 	const [state, setState] = useState<PlayerState>({
 		currentMusic: null,
 		isPlaying: false,
@@ -20,6 +20,13 @@ export function usePlayer() {
 		rate: 1,
 		isLoading: false,
 	})
+
+	const playlistRef = useRef(playlist)
+	playlistRef.current = playlist
+
+	const setPlaylist = useCallback((list: Music[] | undefined) => {
+		playlistRef.current = list
+	}, [])
 
 	useEffect(() => {
 		audioPlayer.onPlaybackStatusUpdate((status) => {
@@ -36,19 +43,35 @@ export function usePlayer() {
 		}
 	}, [])
 
-	const loadAndPlay = useCallback(async (music: Music) => {
-		setState((prev) => ({ ...prev, isLoading: true, currentMusic: music }))
+	const prefetchNext = useCallback(async (currentMusic: Music) => {
+		const list = playlistRef.current
+		if (!list || list.length === 0) return
 
-		try {
-			const uri = musicApi.getStreamUrl(music.id)
-			await audioPlayer.load(uri)
-			await audioPlayer.play()
-		} catch (error) {
-			console.error('Error loading music:', error)
-		} finally {
-			setState((prev) => ({ ...prev, isLoading: false }))
-		}
+		const index = list.findIndex((m) => m.id === currentMusic.id)
+		if (index === -1 || index >= list.length - 1) return
+
+		const next = list[index + 1]
+		const nextUri = musicApi.getStreamUrl(next.id)
+		await audioPlayer.preloadNext(nextUri)
 	}, [])
+
+	const loadAndPlay = useCallback(
+		async (music: Music) => {
+			setState((prev) => ({ ...prev, isLoading: true, currentMusic: music }))
+
+			try {
+				const uri = musicApi.getStreamUrl(music.id)
+				await audioPlayer.load(uri)
+				await audioPlayer.play()
+				prefetchNext(music)
+			} catch (error) {
+				console.error('Error loading music:', error)
+			} finally {
+				setState((prev) => ({ ...prev, isLoading: false }))
+			}
+		},
+		[prefetchNext],
+	)
 
 	const play = useCallback(async () => {
 		await audioPlayer.play()
@@ -74,5 +97,7 @@ export function usePlayer() {
 		pause,
 		seek,
 		setRate,
+		prefetchNext,
+		setPlaylist,
 	}
 }

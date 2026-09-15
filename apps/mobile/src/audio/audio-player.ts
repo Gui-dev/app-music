@@ -1,4 +1,9 @@
-import { createAudioPlayer as createPlayer, type AudioPlayer } from 'expo-audio'
+import {
+	clearPreloadedSource,
+	createAudioPlayer as createPlayer,
+	preload,
+	type AudioPlayer,
+} from 'expo-audio'
 
 type PlaybackCallback = (status: {
 	isPlaying: boolean
@@ -17,7 +22,10 @@ class AudioPlayerService {
 			this.player.remove()
 		}
 
-		this.player = createPlayer({ uri }, { updateInterval: 1000 })
+		this.player = createPlayer(
+			{ uri },
+			{ updateInterval: 1000, preferredForwardBufferDuration: 30 },
+		)
 		this.addListener()
 	}
 
@@ -37,6 +45,22 @@ class AudioPlayerService {
 	async setRate(rate: number): Promise<void> {
 		if (!this.player) return
 		this.player.setPlaybackRate(rate)
+	}
+
+	async preloadNext(uri: string): Promise<void> {
+		try {
+			await preload(uri, { preferredForwardBufferDuration: 20 })
+		} catch {
+			// preload failure is non-critical
+		}
+	}
+
+	async clearPreload(uri: string): Promise<void> {
+		try {
+			await clearPreloadedSource(uri)
+		} catch {
+			// clear failure is non-critical
+		}
 	}
 
 	onPlaybackStatusUpdate(callback: PlaybackCallback): void {

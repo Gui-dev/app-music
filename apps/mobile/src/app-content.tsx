@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
 	FlatList,
 	RefreshControl,
@@ -113,6 +113,14 @@ export function AppContent() {
 	const musicList = musics || []
 	const searchList = searchResults.data || []
 	const albumGroups = groupByAlbum(musicList)
+
+	const activePlaylistMusics = selectedPlaylist
+		? musicList.filter((m) => selectedPlaylist.musicIds.includes(m.id))
+		: undefined
+
+	useEffect(() => {
+		player.setPlaylist(activePlaylistMusics)
+	}, [activePlaylistMusics, player])
 
 	return (
 		<SafeAreaView className="flex-1 bg-bg" edges={['top']}>

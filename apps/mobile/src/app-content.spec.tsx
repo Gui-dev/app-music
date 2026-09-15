@@ -102,6 +102,8 @@ describe('AppContent', () => {
 			pause: vi.fn(),
 			seek: vi.fn(),
 			setRate: vi.fn(),
+			prefetchNext: vi.fn(),
+			setPlaylist: vi.fn(),
 		} as unknown as ReturnType<typeof usePlayer.usePlayer>)
 	})
 
