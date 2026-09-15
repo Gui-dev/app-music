@@ -146,4 +146,19 @@ describe('MusicRepository', () => {
 		const all = await repo.findAll()
 		expect(all).toHaveLength(3)
 	})
+
+	it('should save more than one batch of musics', async () => {
+		const db = createDatabase(':memory:')
+		const repo = new MusicRepository(db)
+		const musics = Array.from({ length: 101 }, (_, index) =>
+			createTestMusic({
+				id: String(index),
+				title: `Song ${index}`,
+			}),
+		)
+
+		await repo.saveMany(musics)
+
+		expect(await repo.findAll()).toHaveLength(101)
+	})
 })

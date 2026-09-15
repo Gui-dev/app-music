@@ -4,6 +4,8 @@ import type { Music } from '@/domain/entities'
 import type { AppDatabase } from '../database/database'
 import { musics } from '../database/schemas'
 
+const SAVE_MANY_BATCH_SIZE = 100
+
 export class MusicRepository implements IMusicRepository {
 	constructor(private readonly db: AppDatabase) {}
 
@@ -67,14 +69,23 @@ export class MusicRepository implements IMusicRepository {
 	}
 
 	async saveMany(musicsList: Music[]): Promise<void> {
-		const rows = musicsList.map(this.toRow)
-		await this.db
-			.insert(musics)
-			.values(rows)
-			.onConflictDoUpdate({
-				target: musics.id,
-				set: { id: musics.id },
-			})
+		for (
+			let index = 0;
+			index < musicsList.length;
+			index += SAVE_MANY_BATCH_SIZE
+		) {
+			const rows = musicsList
+				.slice(index, index + SAVE_MANY_BATCH_SIZE)
+				.map(this.toRow)
+
+			await this.db
+				.insert(musics)
+				.values(rows)
+				.onConflictDoUpdate({
+					target: musics.id,
+					set: { id: musics.id },
+				})
+		}
 	}
 
 	private toDomain(row: typeof musics.$inferSelect): Music {

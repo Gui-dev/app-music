@@ -11,9 +11,11 @@ export async function scanRoutes(app: FastifyInstance) {
 			'/scan',
 			{
 				schema: {
-					body: z.object({
-						path: z.string().optional(),
-					}).nullable(),
+					body: z
+						.object({
+							path: z.string().optional(),
+						})
+						.nullable(),
 				},
 			},
 			async (request, reply) => {
@@ -26,18 +28,23 @@ export async function scanRoutes(app: FastifyInstance) {
 					console.log('calling scanDirectory')
 					const musics =
 						await app.container.scannerService.scanDirectory(scanPath)
+					await app.container.musicRepository.saveMany(musics)
 					return {
 						count: musics.length,
 						message: `Found ${musics.length} music files`,
 					}
-				} catch (error: any) {
-					console.error('catch error:', error.message, error.stack)
-					return reply.status(500).send({ error: error.message })
+				} catch (error) {
+					const message =
+						error instanceof Error
+							? error.message
+							: 'Unable to scan music directory'
+					console.error('catch error:', error)
+					return reply.status(500).send({ error: message })
 				}
 			},
 		)
 		console.log('/scan route registered successfully')
-	} catch (error: any) {
-		console.error('register error:', error.message, error.stack)
+	} catch (error) {
+		console.error('register error:', error)
 	}
 }
