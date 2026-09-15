@@ -116,7 +116,32 @@
 ## Additional Features (Backlog)
 
 - v Cover art fetching (Last.fm integration on mobile)
-- v Audio playback with expo-av (currently mocked)
-- v Playlist management UI (create, edit, delete, reorder)
+- v Audio playback with expo-av (migrated to expo-audio)
+- v Playlist management UI (create, view, navigate)
 - v Pull-to-refresh on Biblioteca
-- v Playlist management UI (create, edit, delete, reorder)
+- v Buffer lookahead (30s like Spotify)
+- v Playlist prefetch (next track pre-loads in background)
+- v Cache-Control headers on streaming endpoint
+
+## Improvements (Backlog)
+
+### P0 — Bugs / UX
+
+- x Auto-advance: play next song when current ends (didJustFinish)
+- x Error state in player UI (show error message on stream failure)
+- x Buffering indicator (expose isBuffering to UI)
+
+### P1 — Missing Features
+
+- x Remove song from playlist (API + mutation exist, UI missing)
+- x Add song to playlist from music list (addMusicToPlaylist unused)
+- x Equalizer functional (currently fake/static, expo-audio has no EQ API)
+
+### P2 — Code Quality
+
+- x Extract screens from app-content.tsx (381 lines, 5 screens inline)
+- x Handle musicsError in UI (destructured but never shown)
+- x Remove dead code: use-playlist.ts (superseded by React Query)
+- x Remove empty directories: domain/entities, domain/usecases, storage, navigation
+- x Integration tests for server routes (supertest)
+- x E2E tests with Detox (requires Android SDK)
