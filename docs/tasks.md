@@ -115,7 +115,7 @@
 
 ## Additional Features (Backlog)
 
-- x Cover art fetching (Last.fm integration on mobile)
+- v Cover art fetching (Last.fm integration on mobile)
 - x Audio playback with expo-av (currently mocked)
 - x Playlist management UI (create, edit, delete, reorder)
 - x Pull-to-refresh on Biblioteca
