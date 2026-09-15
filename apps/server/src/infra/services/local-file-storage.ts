@@ -8,12 +8,19 @@ import type {
 export class LocalFileStorage implements IFileStorage {
 	constructor(private readonly basePath: string) {}
 
+	private resolvePath(filePath: string): string {
+		if (filePath.startsWith('/')) {
+			return filePath
+		}
+		return `${this.basePath}/${filePath}`
+	}
+
 	async getStream(
 		filePath: string,
 		start?: number,
 		end?: number,
 	): Promise<FileStream> {
-		const fullPath = `${this.basePath}/${filePath}`
+		const fullPath = this.resolvePath(filePath)
 		const stream = createReadStream(fullPath, { start, end })
 
 		return {
@@ -26,7 +33,7 @@ export class LocalFileStorage implements IFileStorage {
 	async getFileInfo(
 		filePath: string,
 	): Promise<{ size: number; contentType: string }> {
-		const fullPath = `${this.basePath}/${filePath}`
+		const fullPath = this.resolvePath(filePath)
 		const stats = statSync(fullPath)
 
 		return {
