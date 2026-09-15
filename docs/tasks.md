@@ -86,7 +86,7 @@
 - v Write unit tests for `AppContent` (all screens inline) (11 tests passing)
 - v Set up MSW v2 handlers for API mocking
 - v Write E2E tests with Detox (player flow) (deferred — requires Android SDK)
-- x Write unit tests for TanStack Query hooks (musics, playlists, search)
+- v Write unit tests for TanStack Query hooks (musics, playlists, search) (28 tests passing)
 - v Test query invalidation and cache updates
 - v Test optimistic updates for playlist mutations
 
