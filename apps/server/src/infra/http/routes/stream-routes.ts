@@ -34,6 +34,7 @@ export async function streamRoutes(app: FastifyInstance) {
 				reply.header('Accept-Ranges', 'bytes')
 				reply.header('Content-Length', contentLength)
 				reply.header('Content-Type', result.stream.contentType)
+				reply.header('Cache-Control', 'public, max-age=3600')
 
 				return reply.send(result.stream.stream as unknown as Readable)
 			} catch (error: any) {
