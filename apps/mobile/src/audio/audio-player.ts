@@ -1,3 +1,5 @@
+import { Audio } from 'expo-av'
+
 type PlaybackCallback = (status: {
 	isPlaying: boolean
 	positionMillis: number
@@ -5,54 +7,60 @@ type PlaybackCallback = (status: {
 }) => void
 
 class AudioPlayerService {
-	private isLoaded = false
-	private isPlaying = false
-	private positionMillis = 0
-	private durationMillis = 0
+	private sound: Audio.Sound | null = null
 	private callback: PlaybackCallback | null = null
 
-	async load(_uri: string): Promise<void> {
-		this.isLoaded = true
-		this.positionMillis = 0
+	async load(uri: string): Promise<void> {
+		if (this.sound) {
+			await this.sound.unloadAsync()
+		}
+
+		const { sound } = await Audio.Sound.createAsync(
+			{ uri },
+			{ shouldPlay: false },
+			(status) => {
+				if (status.isLoaded) {
+					this.callback?.({
+						isPlaying: status.isPlaying,
+						positionMillis: status.positionMillis,
+						durationMillis: status.durationMillis ?? 0,
+					})
+				}
+			},
+		)
+
+		this.sound = sound
 	}
 
 	async play(): Promise<void> {
-		this.isPlaying = true
-		this.callback?.({
-			isPlaying: this.isPlaying,
-			positionMillis: this.positionMillis,
-			durationMillis: this.durationMillis,
-		})
+		if (!this.sound) return
+		await this.sound.playAsync()
 	}
 
 	async pause(): Promise<void> {
-		this.isPlaying = false
-		this.callback?.({
-			isPlaying: this.isPlaying,
-			positionMillis: this.positionMillis,
-			durationMillis: this.durationMillis,
-		})
+		if (!this.sound) return
+		await this.sound.pauseAsync()
 	}
 
 	async seek(positionMillis: number): Promise<void> {
-		this.positionMillis = positionMillis
-		this.callback?.({
-			isPlaying: this.isPlaying,
-			positionMillis: this.positionMillis,
-			durationMillis: this.durationMillis,
-		})
+		if (!this.sound) return
+		await this.sound.setPositionAsync(positionMillis)
 	}
 
-	async setRate(_rate: number): Promise<void> {}
+	async setRate(rate: number): Promise<void> {
+		if (!this.sound) return
+		await this.sound.setRateAsync(rate, true)
+	}
 
 	onPlaybackStatusUpdate(callback: PlaybackCallback): void {
 		this.callback = callback
 	}
 
 	async unload(): Promise<void> {
-		this.isLoaded = false
-		this.isPlaying = false
-		this.positionMillis = 0
+		if (this.sound) {
+			await this.sound.unloadAsync()
+			this.sound = null
+		}
 	}
 }
 
