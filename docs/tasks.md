@@ -99,9 +99,9 @@
 
 ## Deployment
 
-- x Create build script for backend (`node dist/server.js`)
-- x Create build script for mobile (`eas build --profile preview`)
-- x Configure port 3000 for backend
+- v Create build script for backend (`pnpm build` → `tsc`, `pnpm start` → `node dist/server.js`)
+- v Create build script for mobile (`eas build --profile preview`, `eas.json` configured)
+- v Configure port 3000 for backend (configurable via `PORT` env var)
 - v Set up development workflow (`expo start`, `tsx watch`)
 
 ## Documentation
