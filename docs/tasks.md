@@ -72,16 +72,19 @@
 
 ## Frontend Testing
 
-- x Write unit tests for `MusicCard` component
-- x Write unit tests for `PlayerControls` component
-- x Write unit tests for `ProgressBar` component
-- x Write unit tests for `usePlayer` hook
-- x Write unit tests for `usePlaylist` hook
-- x Write unit tests for `HomeScreen`
-- x Write unit tests for `PlayerScreen`
-- x Write unit tests for `SearchScreen`
-- x Write unit tests for `PlaylistsScreen`
-- x Set up MSW v2 handlers for API mocking
+- v Configure Vitest for mobile (jsdom env, aliases for react-native, automatic JSX runtime)
+- v Create `__mocks__/` for react-native, @expo/vector-icons, react-native-safe-area-context, nativewind, expo-constants
+- v Switch from @testing-library/react-native to @testing-library/react (DOM-based testing)
+- v Write unit tests for `MusicCard` component (8 tests passing)
+- v Write unit tests for `PlayerControls` component (15 tests passing)
+- v Write unit tests for `ProgressBar` component (14 tests passing)
+- v Write unit tests for `AlbumCard` component (16 tests passing)
+- v Write unit tests for `Equalizer` component (20 tests passing)
+- v Write unit tests for `BottomNav` component (17 tests passing)
+- v Write unit tests for `usePlayer` hook (12 tests passing)
+- v Write unit tests for `usePlaylist` hook (11 tests passing)
+- v Write unit tests for `AppContent` (all screens inline) (11 tests passing)
+- v Set up MSW v2 handlers for API mocking
 - x Write E2E tests with Detox (player flow)
 - x Write unit tests for TanStack Query hooks (musics, playlists, search)
 - x Test query invalidation and cache updates
