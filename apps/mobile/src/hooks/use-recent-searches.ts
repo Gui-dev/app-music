@@ -20,23 +20,19 @@ export function useRecentSearches() {
 		})
 	}, [])
 
-	const persist = useCallback((list: Music[]) => {
-		setRecentSearches(list)
-		AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(list))
+	const addRecentSearch = useCallback(async (music: Music) => {
+		setRecentSearches((prev) => {
+			const filtered = prev.filter((m) => m.id !== music.id)
+			const updated = [music, ...filtered].slice(0, MAX_ITEMS)
+			AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+			return updated
+		})
 	}, [])
 
-	const addRecentSearch = useCallback(
-		async (music: Music) => {
-			const filtered = recentSearches.filter((m) => m.id !== music.id)
-			const updated = [music, ...filtered].slice(0, MAX_ITEMS)
-			persist(updated)
-		},
-		[recentSearches, persist],
-	)
-
 	const clearRecentSearches = useCallback(() => {
-		persist([])
-	}, [persist])
+		setRecentSearches([])
+		AsyncStorage.setItem(STORAGE_KEY, '[]')
+	}, [])
 
 	return { recentSearches, addRecentSearch, clearRecentSearches }
 }
