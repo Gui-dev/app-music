@@ -146,9 +146,17 @@ export function AppContent() {
 								<Text className="text-base text-text-secondary text-center mb-0.5">
 									{selectedMusic.artist}
 								</Text>
-								<Text className="text-sm text-text-secondary text-center mb-6">
-									{selectedMusic.album}
-								</Text>
+							<Text className="text-sm text-text-secondary text-center mb-6">
+								{selectedMusic.album}
+							</Text>
+
+							<TouchableOpacity
+								onPress={() => setAddingMusicId(selectedMusic.id)}
+								className="mb-4 flex-row items-center gap-2"
+							>
+								<Ionicons name="add-circle-outline" size={20} color="#FACC16" />
+								<Text className="text-sm text-primary">Adicionar à playlist</Text>
+							</TouchableOpacity>
 
 							<ProgressBar
 								progress={progress}
