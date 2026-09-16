@@ -22,6 +22,7 @@ class AudioPlayerService {
 	async load(uri: string): Promise<void> {
 		if (this.player) {
 			this.removeListener()
+			this.player.pause()
 			this.player.remove()
 		}
 
@@ -81,6 +82,7 @@ class AudioPlayerService {
 	async unload(): Promise<void> {
 		this.removeListener()
 		if (this.player) {
+			this.player.pause()
 			this.player.remove()
 			this.player = null
 		}
