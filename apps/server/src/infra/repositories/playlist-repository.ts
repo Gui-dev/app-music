@@ -56,15 +56,21 @@ export class PlaylistRepository implements IPlaylistRepository {
 
 	async create(name: string): Promise<Playlist> {
 		const id = crypto.randomUUID()
+		const now = new Date()
 
-		await this.db.insert(playlists).values({ id, name })
+		await this.db.insert(playlists).values({
+			id,
+			name,
+			createdAt: now.toISOString(),
+			updatedAt: now.toISOString(),
+		})
 
 		return {
 			id,
 			name,
 			musicIds: [],
-			createdAt: new Date(),
-			updatedAt: new Date(),
+			createdAt: now,
+			updatedAt: now,
 		}
 	}
 
@@ -133,8 +139,9 @@ export class PlaylistRepository implements IPlaylistRepository {
 		musicIds: string[],
 	): Playlist {
 		const parseDate = (value: string | null): Date => {
-			if (!value) return new Date()
-			return new Date(value.replace(' ', 'T'))
+			if (!value || value === 'CURRENT_TIMESTAMP') return new Date()
+			const d = new Date(value.replace(' ', 'T'))
+			return Number.isNaN(d.getTime()) ? new Date() : d
 		}
 		return {
 			id: row.id,
