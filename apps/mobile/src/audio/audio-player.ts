@@ -9,6 +9,7 @@ type PlaybackCallback = (status: {
 	isPlaying: boolean
 	positionMillis: number
 	durationMillis: number
+	isBuffering: boolean
 }) => void
 
 class AudioPlayerService {
@@ -93,6 +94,7 @@ class AudioPlayerService {
 					isPlaying: status.playing,
 					positionMillis: status.currentTime * 1000,
 					durationMillis: (status.duration ?? 0) * 1000,
+					isBuffering: status.isBuffering,
 				})
 				if (status.didJustFinish) {
 					this.finishedCallback?.()

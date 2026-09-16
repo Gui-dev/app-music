@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
+	ActivityIndicator,
 	FlatList,
 	Modal,
 	RefreshControl,
@@ -176,6 +177,15 @@ export function AppContent() {
 								duration={player.durationMillis}
 								onSeek={handleSeek}
 							/>
+
+							{player.isBuffering && !player.isLoading && (
+								<View className="my-2 flex-row items-center gap-2">
+									<ActivityIndicator size="small" color="#FACC16" />
+									<Text className="text-xs text-text-secondary">
+										Carregando...
+									</Text>
+								</View>
+							)}
 
 							<PlayerControls
 								isPlaying={player.isPlaying}

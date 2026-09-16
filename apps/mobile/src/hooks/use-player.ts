@@ -9,6 +9,7 @@ interface PlayerState {
 	durationMillis: number
 	rate: number
 	isLoading: boolean
+	isBuffering: boolean
 	error: string | null
 }
 
@@ -20,6 +21,7 @@ export function usePlayer(playlist?: Music[]) {
 		durationMillis: 0,
 		rate: 1,
 		isLoading: false,
+		isBuffering: false,
 		error: null,
 	})
 
@@ -44,6 +46,7 @@ export function usePlayer(playlist?: Music[]) {
 				isPlaying: status.isPlaying,
 				positionMillis: status.positionMillis,
 				durationMillis: status.durationMillis,
+				isBuffering: status.isBuffering,
 			}))
 		})
 

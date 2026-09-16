@@ -79,6 +79,7 @@ describe('usePlayer', () => {
 				isPlaying: true,
 				positionMillis: 5000,
 				durationMillis: 180000,
+				isBuffering: false,
 			})
 		})
 

@@ -97,6 +97,7 @@ describe('AppContent', () => {
 			durationMillis: 0,
 			rate: 1,
 			isLoading: false,
+			isBuffering: false,
 			error: null,
 			loadAndPlay: vi.fn(),
 			play: vi.fn(),
