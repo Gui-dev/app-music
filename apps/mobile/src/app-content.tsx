@@ -375,10 +375,34 @@ export function AppContent() {
 								maxToRenderPerBatch={10}
 								removeClippedSubviews
 								renderItem={({ item }) => (
-									<MusicCard
-										music={item!}
-										onPress={() => selectAndPlay(item!)}
-									/>
+									<View className="mx-4 mb-2 flex-row items-center rounded-lg bg-surface p-3">
+										<TouchableOpacity
+											onPress={() => selectAndPlay(item!)}
+											className="flex-1 flex-row items-center"
+										>
+											<CoverArt coverUrl={item!.coverUrl} size={40} className="mr-3" />
+											<View className="flex-1">
+												<Text className="text-sm font-semibold text-text-primary">
+													{item!.title}
+												</Text>
+												<Text className="text-xs text-text-secondary">
+													{item!.artist}
+												</Text>
+											</View>
+										</TouchableOpacity>
+										<TouchableOpacity
+											onPress={() =>
+												removeMusicFromPlaylist.mutate({
+													playlistId: selectedPlaylist.id,
+													musicId: item!.id,
+												})
+											}
+											hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+											className="ml-2"
+										>
+											<Ionicons name="trash-outline" size={18} color="#EF4444" />
+										</TouchableOpacity>
+									</View>
 								)}
 								ListEmptyComponent={
 									<View className="items-center py-8">
