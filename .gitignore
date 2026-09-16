@@ -10,3 +10,9 @@ coverage/
 *.ipa
 *.apk
 *.aab
+
+# SQLite
+data/
+*.db
+*.db-shm
+*.db-wal
