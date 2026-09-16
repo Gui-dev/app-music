@@ -122,6 +122,7 @@
 - v Buffer lookahead (30s like Spotify)
 - v Playlist prefetch (next track pre-loads in background)
 - v Cache-Control headers on streaming endpoint
+- v Recent searches in SearchScreen (top 10, in-memory)
 
 ## Improvements (Backlog)
 
@@ -143,5 +144,5 @@
 - v Handle musicsError in UI (error banner + retry on BibliotecaScreen)
 - v Remove dead code: use-playlist.ts (superseded by React Query)
 - v Remove empty directories: domain/entities, domain/usecases, storage, navigation
-- x Integration tests for server routes (supertest)
+- v Integration tests for server routes (supertest)
 - x E2E tests with Detox (requires Android SDK)
