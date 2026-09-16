@@ -140,8 +140,8 @@
 ### P2 — Code Quality
 
 - v Extract screens from app-content.tsx (497 → 206 lines, 5 screens extracted)
-- x Handle musicsError in UI (destructured but never shown)
-- x Remove dead code: use-playlist.ts (superseded by React Query)
-- x Remove empty directories: domain/entities, domain/usecases, storage, navigation
+- v Handle musicsError in UI (error banner + retry on BibliotecaScreen)
+- v Remove dead code: use-playlist.ts (superseded by React Query)
+- v Remove empty directories: domain/entities, domain/usecases, storage, navigation
 - x Integration tests for server routes (supertest)
 - x E2E tests with Detox (requires Android SDK)
