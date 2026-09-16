@@ -14,6 +14,7 @@ vi.mock('../audio/audio-player', () => ({
 		unload: vi.fn().mockResolvedValue(undefined),
 		onPlaybackStatusUpdate: vi.fn(),
 		onFinished: vi.fn(),
+		onError: vi.fn(),
 	},
 }))
 

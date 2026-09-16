@@ -158,6 +158,18 @@ export function AppContent() {
 								<Text className="text-sm text-primary">Adicionar à playlist</Text>
 							</TouchableOpacity>
 
+							{player.error && (
+								<View className="mb-4 w-full flex-row items-center rounded-lg bg-red-900/40 p-3">
+									<Ionicons name="alert-circle" size={18} color="#EF4444" />
+									<Text className="ml-2 flex-1 text-sm text-red-400">
+										{player.error}
+									</Text>
+									<TouchableOpacity onPress={player.clearError}>
+										<Ionicons name="close" size={18} color="#EF4444" />
+									</TouchableOpacity>
+								</View>
+							)}
+
 							<ProgressBar
 								progress={progress}
 								currentTime={player.positionMillis}

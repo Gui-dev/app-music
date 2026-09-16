@@ -15,6 +15,7 @@ class AudioPlayerService {
 	private player: AudioPlayer | null = null
 	private callback: PlaybackCallback | null = null
 	private finishedCallback: (() => void) | null = null
+	private errorCallback: ((message: string) => void) | null = null
 	private listener: ReturnType<AudioPlayer['addListener']> | null = null
 
 	async load(uri: string): Promise<void> {
@@ -72,6 +73,10 @@ class AudioPlayerService {
 		this.finishedCallback = callback
 	}
 
+	onError(callback: (message: string) => void): void {
+		this.errorCallback = callback
+	}
+
 	async unload(): Promise<void> {
 		this.removeListener()
 		if (this.player) {
@@ -92,6 +97,8 @@ class AudioPlayerService {
 				if (status.didJustFinish) {
 					this.finishedCallback?.()
 				}
+			} else if (status.error) {
+				this.errorCallback?.(status.error)
 			}
 		})
 	}

@@ -9,6 +9,7 @@ interface PlayerState {
 	durationMillis: number
 	rate: number
 	isLoading: boolean
+	error: string | null
 }
 
 export function usePlayer(playlist?: Music[]) {
@@ -19,6 +20,7 @@ export function usePlayer(playlist?: Music[]) {
 		durationMillis: 0,
 		rate: 1,
 		isLoading: false,
+		error: null,
 	})
 
 	const playlistRef = useRef(playlist)
@@ -45,6 +47,14 @@ export function usePlayer(playlist?: Music[]) {
 			}))
 		})
 
+		audioPlayer.onError((message) => {
+			setState((prev) => ({
+				...prev,
+				error: message,
+				isLoading: false,
+			}))
+		})
+
 		return () => {
 			audioPlayer.unload()
 		}
@@ -64,7 +74,7 @@ export function usePlayer(playlist?: Music[]) {
 
 	const loadAndPlay = useCallback(
 		async (music: Music) => {
-			setState((prev) => ({ ...prev, isLoading: true, currentMusic: music }))
+			setState((prev) => ({ ...prev, isLoading: true, currentMusic: music, error: null }))
 
 			try {
 				const uri = musicApi.getStreamUrl(music.id)
@@ -73,6 +83,11 @@ export function usePlayer(playlist?: Music[]) {
 				prefetchNext(music)
 			} catch (error) {
 				console.error('Error loading music:', error)
+				setState((prev) => ({
+					...prev,
+					error: 'Falha ao carregar música. Verifique a conexão com o servidor.',
+					isLoading: false,
+				}))
 			} finally {
 				setState((prev) => ({ ...prev, isLoading: false }))
 			}
@@ -97,6 +112,10 @@ export function usePlayer(playlist?: Music[]) {
 		setState((prev) => ({ ...prev, rate }))
 	}, [])
 
+	const clearError = useCallback(() => {
+		setState((prev) => ({ ...prev, error: null }))
+	}, [])
+
 	return {
 		...state,
 		loadAndPlay,
@@ -104,6 +123,7 @@ export function usePlayer(playlist?: Music[]) {
 		pause,
 		seek,
 		setRate,
+		clearError,
 		prefetchNext,
 		setPlaylist,
 		setOnFinished,
