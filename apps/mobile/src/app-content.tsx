@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
 	FlatList,
+	Modal,
 	RefreshControl,
 	Text,
 	TextInput,
@@ -35,6 +36,7 @@ export function AppContent() {
 	const [newPlaylistName, setNewPlaylistName] = useState('')
 	const [expandedAlbum, setExpandedAlbum] = useState<string | null>(null)
 	const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null)
+	const [addingMusicId, setAddingMusicId] = useState<string | null>(null)
 
 	const player = usePlayer()
 	const lastPlayedIdRef = useRef<string | null>(null)
@@ -207,6 +209,7 @@ export function AppContent() {
 									<MusicCard
 										music={item}
 										onPress={() => selectAndPlay(item)}
+										onAddToPlaylist={() => setAddingMusicId(item.id)}
 									/>
 								)}
 							/>
@@ -261,6 +264,7 @@ export function AppContent() {
 												setExpandedAlbum(isExpanded ? null : albumName)
 											}
 										onSongPress={(music) => selectAndPlay(music)}
+										onAddToPlaylist={(music) => setAddingMusicId(music.id)}
 										/>
 									)
 								}}
@@ -388,7 +392,51 @@ export function AppContent() {
 				)}
 
 				<BottomNav screen={screen} setScreen={setScreen} />
-			</View>
+
+			{addingMusicId !== null && (
+			<Modal
+				visible
+				transparent
+				animationType="slide"
+				onRequestClose={() => setAddingMusicId(null)}
+			>
+				<View className="flex-1 justify-end bg-black/60">
+					<View className="rounded-t-2xl bg-surface p-4">
+						<Text className="mb-4 text-lg font-bold text-text-primary">
+							Adicionar à playlist
+						</Text>
+						<FlatList
+							data={playlists || []}
+							keyExtractor={(item) => item.id}
+							renderItem={({ item }) => (
+								<TouchableOpacity
+									onPress={() => {
+										if (addingMusicId) {
+											addMusicToPlaylist.mutate(
+												{ playlistId: item.id, musicId: addingMusicId },
+												{ onSuccess: () => setAddingMusicId(null) },
+											)
+										}
+									}}
+									className="mb-2 rounded-lg bg-surface-hover p-3"
+								>
+									<Text className="text-base text-text-primary">
+										{item.name}
+									</Text>
+								</TouchableOpacity>
+							)}
+						/>
+						<TouchableOpacity
+							onPress={() => setAddingMusicId(null)}
+							className="mt-2 items-center py-3"
+						>
+							<Text className="text-text-secondary">Cancelar</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</Modal>
+			)}
+		</View>
 		</SafeAreaView>
 	)
 }

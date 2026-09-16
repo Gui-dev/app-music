@@ -10,6 +10,7 @@ interface AlbumCardProps {
 	isExpanded: boolean
 	onToggle: () => void
 	onSongPress: (music: Music) => void
+	onAddToPlaylist?: (music: Music) => void
 }
 
 export function AlbumCard({
@@ -18,6 +19,7 @@ export function AlbumCard({
 	isExpanded,
 	onToggle,
 	onSongPress,
+	onAddToPlaylist,
 }: AlbumCardProps) {
 	const albumCoverUrl = songs[0]?.coverUrl ?? null
 
@@ -45,17 +47,22 @@ export function AlbumCard({
 			</TouchableOpacity>
 
 			{isExpanded && (
-				<FlatList
-					data={songs}
-					keyExtractor={(item) => item.id}
-					renderItem={({ item }) => (
-						<MusicCard
-							music={item}
-							onPress={() => onSongPress(item)}
-							showDuration
-						/>
-					)}
-				/>
+					<FlatList
+						data={songs}
+						keyExtractor={(item) => item.id}
+						renderItem={({ item }) => (
+							<MusicCard
+								music={item}
+								onPress={() => onSongPress(item)}
+								showDuration
+								onAddToPlaylist={
+									onAddToPlaylist
+										? () => onAddToPlaylist(item)
+										: undefined
+								}
+							/>
+						)}
+					/>
 			)}
 		</View>
 	)

@@ -1,3 +1,5 @@
+import { Ionicons } from '@expo/vector-icons'
+import { memo } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { CoverArt } from './cover-art'
 
@@ -14,12 +16,14 @@ interface MusicCardProps {
 	music: Music
 	onPress: () => void
 	showDuration?: boolean
+	onAddToPlaylist?: () => void
 }
 
-export function MusicCard({
+export const MusicCard = memo(function MusicCard({
 	music,
 	onPress,
 	showDuration = false,
+	onAddToPlaylist,
 }: MusicCardProps) {
 	return (
 		<TouchableOpacity
@@ -39,6 +43,15 @@ export function MusicCard({
 					{String(music.duration % 60).padStart(2, '0')}
 				</Text>
 			)}
+			{onAddToPlaylist && (
+				<TouchableOpacity
+					onPress={onAddToPlaylist}
+					hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+					className="ml-2"
+				>
+					<Ionicons name="add-circle-outline" size={24} color="#FACC16" />
+				</TouchableOpacity>
+			)}
 		</TouchableOpacity>
 	)
-}
+})
