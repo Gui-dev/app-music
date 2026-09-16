@@ -200,6 +200,9 @@ export function AppContent() {
 							<FlatList
 								data={searchResults.data || []}
 								keyExtractor={(item) => item.id}
+								windowSize={5}
+								maxToRenderPerBatch={10}
+								removeClippedSubviews
 								renderItem={({ item }) => (
 									<MusicCard
 										music={item}
@@ -235,6 +238,9 @@ export function AppContent() {
 						<FlatList
 							data={albumGroups}
 							keyExtractor={([album]) => album}
+							windowSize={5}
+							maxToRenderPerBatch={10}
+							removeClippedSubviews
 							refreshControl={
 								<RefreshControl
 									refreshing={musicsRefetching}
@@ -330,6 +336,9 @@ export function AppContent() {
 									.map((id) => musicList.find((m) => m.id === id))
 									.filter(Boolean)}
 								keyExtractor={(item) => item!.id}
+								windowSize={5}
+								maxToRenderPerBatch={10}
+								removeClippedSubviews
 								renderItem={({ item }) => (
 									<MusicCard
 										music={item!}
