@@ -133,7 +133,7 @@
 
 ### P1 — Missing Features
 
-- x Remove song from playlist (API + mutation exist, UI missing)
+- v Remove song from playlist (API + mutation exist, UI missing)
 - v Add song to playlist from music list (addMusicToPlaylist unused)
 - x Equalizer functional (currently fake/static, expo-audio has no EQ API)
 
