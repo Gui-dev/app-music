@@ -1,38 +1,30 @@
-import { useCallback, useEffect, useState } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useCallback, useState } from 'react'
 import type { Music } from '../infra/api/music-api'
 
-const STORAGE_KEY = '@app-music/recent-searches'
 const MAX_ITEMS = 10
 
-export function useRecentSearches() {
-	const [recentSearches, setRecentSearches] = useState<Music[]>([])
+let memoryStore: Music[] = []
 
-	useEffect(() => {
-		AsyncStorage.getItem(STORAGE_KEY).then((raw) => {
-			if (raw) {
-				try {
-					setRecentSearches(JSON.parse(raw))
-				} catch {
-					AsyncStorage.removeItem(STORAGE_KEY)
-				}
-			}
-		})
-	}, [])
+export function useRecentSearches() {
+	const [recentSearches, setRecentSearches] = useState<Music[]>(memoryStore)
 
 	const addRecentSearch = useCallback(async (music: Music) => {
 		setRecentSearches((prev) => {
 			const filtered = prev.filter((m) => m.id !== music.id)
 			const updated = [music, ...filtered].slice(0, MAX_ITEMS)
-			AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+			memoryStore = updated
 			return updated
 		})
 	}, [])
 
 	const clearRecentSearches = useCallback(() => {
+		memoryStore = []
 		setRecentSearches([])
-		AsyncStorage.setItem(STORAGE_KEY, '[]')
 	}, [])
 
 	return { recentSearches, addRecentSearch, clearRecentSearches }
+}
+
+export function _resetRecentSearchesForTesting() {
+	memoryStore = []
 }

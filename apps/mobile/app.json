@@ -1,10 +1,13 @@
 {
-	"expo": {
-		"name": "app-music-mobile",
-		"slug": "app-music-mobile",
-		"version": "1.0.0",
-		"orientation": "portrait",
-		"userInterfaceStyle": "dark",
-		"entryPoint": "./App.tsx"
-	}
+  "expo": {
+    "name": "app-music-mobile",
+    "slug": "app-music-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "entryPoint": "./App.tsx",
+    "android": {
+      "package": "com.anonymous.appmusicmobile"
+    }
+  }
 }

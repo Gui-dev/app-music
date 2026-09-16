@@ -1,14 +1,6 @@
-import { act, renderHook, waitFor } from '@testing-library/react'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { act, renderHook } from '@testing-library/react'
 import type { Music } from '../infra/api/music-api'
-import { useRecentSearches } from './use-recent-searches'
-
-vi.mock('@react-native-async-storage/async-storage', () => ({
-	default: {
-		getItem: vi.fn().mockResolvedValue(null),
-		setItem: vi.fn().mockResolvedValue(undefined),
-	},
-}))
+import { useRecentSearches, _resetRecentSearchesForTesting } from './use-recent-searches'
 
 const mockMusic: Music = {
 	id: '1',
@@ -23,48 +15,26 @@ const mockMusic: Music = {
 
 describe('useRecentSearches', () => {
 	beforeEach(() => {
-		vi.clearAllMocks()
+		_resetRecentSearchesForTesting()
 	})
 
-	it('loads recent searches from storage on mount', async () => {
-		const stored = JSON.stringify([mockMusic])
-		vi.mocked(AsyncStorage.getItem).mockResolvedValue(stored)
-
+	it('starts with empty list', () => {
 		const { result } = renderHook(() => useRecentSearches())
-
-		await waitFor(() => {
-			expect(result.current.recentSearches).toEqual([mockMusic])
-		})
-
-		expect(AsyncStorage.getItem).toHaveBeenCalledWith(
-			'@app-music/recent-searches',
-		)
+		expect(result.current.recentSearches).toEqual([])
 	})
 
 	it('saves a music to recent searches', async () => {
 		const { result } = renderHook(() => useRecentSearches())
-
-		await waitFor(() => {
-			expect(result.current.recentSearches).toEqual([])
-		})
 
 		await act(async () => {
 			await result.current.addRecentSearch(mockMusic)
 		})
 
 		expect(result.current.recentSearches).toEqual([mockMusic])
-		expect(AsyncStorage.setItem).toHaveBeenCalledWith(
-			'@app-music/recent-searches',
-			JSON.stringify([mockMusic]),
-		)
 	})
 
 	it('keeps only the last 10 items', async () => {
 		const { result } = renderHook(() => useRecentSearches())
-
-		await waitFor(() => {
-			expect(result.current.recentSearches).toEqual([])
-		})
 
 		for (let i = 1; i <= 12; i++) {
 			await act(async () => {
@@ -79,10 +49,6 @@ describe('useRecentSearches', () => {
 
 	it('moves duplicate to top instead of adding again', async () => {
 		const { result } = renderHook(() => useRecentSearches())
-
-		await waitFor(() => {
-			expect(result.current.recentSearches).toEqual([])
-		})
 
 		await act(async () => {
 			await result.current.addRecentSearch({ ...mockMusic, id: '1' })
@@ -102,10 +68,6 @@ describe('useRecentSearches', () => {
 	it('clears all recent searches', async () => {
 		const { result } = renderHook(() => useRecentSearches())
 
-		await waitFor(() => {
-			expect(result.current.recentSearches).toEqual([])
-		})
-
 		await act(async () => {
 			await result.current.addRecentSearch(mockMusic)
 		})
@@ -115,9 +77,5 @@ describe('useRecentSearches', () => {
 		})
 
 		expect(result.current.recentSearches).toEqual([])
-		expect(AsyncStorage.setItem).toHaveBeenCalledWith(
-			'@app-music/recent-searches',
-			'[]',
-		)
 	})
 })

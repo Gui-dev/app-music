@@ -25,10 +25,6 @@ export default defineConfig({
 			),
 			'expo-constants': resolve(mockDir, 'expo-constants.js'),
 			'expo-audio': resolve(mockDir, 'expo-audio.js'),
-			'@react-native-async-storage/async-storage': resolve(
-				mockDir,
-				'@react-native-async-storage.js',
-			),
 			'../../modules/audio-equalizer/src': resolve(mockDir, 'audio-equalizer.js'),
 		},
 	},
