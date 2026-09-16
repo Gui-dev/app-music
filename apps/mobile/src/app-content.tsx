@@ -66,10 +66,16 @@ export function AppContent() {
 		[player],
 	)
 
+	const musicList = musics || []
+
 	const progress =
 		player.durationMillis > 0
 			? player.positionMillis / player.durationMillis
 			: 0
+
+	const activePlaylistMusics = selectedPlaylist
+		? musicList.filter((m) => selectedPlaylist.musicIds.includes(m.id))
+		: undefined
 
 	const handleSeek = useCallback(
 		(value: number) => {
@@ -81,20 +87,20 @@ export function AppContent() {
 
 	const goNext = useCallback(() => {
 		if (!selectedMusic) return
-		const musicsList = musics || []
-		const index = musicsList.findIndex((m) => m.id === selectedMusic.id)
-		const next = musicsList[(index + 1) % musicsList.length]
+		const list = activePlaylistMusics?.length ? activePlaylistMusics : musics || []
+		const index = list.findIndex((m) => m.id === selectedMusic.id)
+		const next = list[(index + 1) % list.length]
 		selectAndPlay(next)
-	}, [selectedMusic, musics, selectAndPlay])
+	}, [selectedMusic, activePlaylistMusics, musics, selectAndPlay])
 
 	const goPrev = useCallback(() => {
 		if (!selectedMusic) return
-		const musicsList = musics || []
-		const index = musicsList.findIndex((m) => m.id === selectedMusic.id)
+		const list = activePlaylistMusics?.length ? activePlaylistMusics : musics || []
+		const index = list.findIndex((m) => m.id === selectedMusic.id)
 		const prev =
-			musicsList[(index - 1 + musicsList.length) % musicsList.length]
+			list[(index - 1 + list.length) % list.length]
 		selectAndPlay(prev)
-	}, [selectedMusic, musics, selectAndPlay])
+	}, [selectedMusic, activePlaylistMusics, musics, selectAndPlay])
 
 	useEffect(() => {
 		player.setOnFinished(goNext)
@@ -117,13 +123,8 @@ export function AppContent() {
 	}
 
 	// Use API data directly, no mock fallback
-	const musicList = musics || []
 	const searchList = searchResults.data || []
 	const albumGroups = groupByAlbum(musicList)
-
-	const activePlaylistMusics = selectedPlaylist
-		? musicList.filter((m) => selectedPlaylist.musicIds.includes(m.id))
-		: undefined
 
 	useEffect(() => {
 		player.setPlaylist(activePlaylistMusics)
