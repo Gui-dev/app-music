@@ -128,7 +128,7 @@
 ### P0 — Bugs / UX
 
 - v Auto-advance: play next song when current ends (didJustFinish)
-- x Error state in player UI (show error message on stream failure)
+- v Error state in player UI (show error message on stream failure)
 - x Buffering indicator (expose isBuffering to UI)
 
 ### P1 — Missing Features
