@@ -44,7 +44,7 @@
 - v Write unit tests for `ListPlaylists` use case
 - v Write unit tests for `RemoveMusicFromPlaylist` use case
 - v Write repository tests with in-memory SQLite
-- x Write integration tests for routes (supertest)
+- v Write integration tests for routes (supertest)
 - v Write in-memory repository tests
 
 ## Frontend
