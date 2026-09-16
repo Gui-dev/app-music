@@ -135,7 +135,7 @@
 
 - v Remove song from playlist (API + mutation exist, UI missing)
 - v Add song to playlist from music list (addMusicToPlaylist unused)
-- x Equalizer functional (currently fake/static, expo-audio has no EQ API)
+- v Equalizer functional (Android only via native module)
 
 ### P2 — Code Quality
 
