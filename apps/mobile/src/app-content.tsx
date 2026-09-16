@@ -9,6 +9,7 @@ import {
 import { useMusics, useSearchMusics } from './hooks/queries/use-musics'
 import { usePlaylists } from './hooks/queries/use-playlists'
 import { usePlayer } from './hooks/use-player'
+import { useRecentSearches } from './hooks/use-recent-searches'
 import { type Music, type Playlist } from './infra/api/music-api'
 import { BottomNav } from './presentation/components/bottom-nav'
 import { Equalizer } from './presentation/components/equalizer'
@@ -45,6 +46,7 @@ export function AppContent() {
 	const createPlaylist = useCreatePlaylist()
 	const addMusicToPlaylist = useAddMusicToPlaylist()
 	const removeMusicFromPlaylist = useRemoveMusicFromPlaylist()
+	const { recentSearches, addRecentSearch, clearRecentSearches } = useRecentSearches()
 
 	const selectAndPlay = useCallback(
 		(music: Music) => {
@@ -140,6 +142,9 @@ export function AppContent() {
 						searchResults={searchResults}
 						onSelectMusic={selectAndPlay}
 						onAddToPlaylist={(id) => setAddingMusicId(id)}
+						recentSearches={recentSearches}
+						onAddRecentSearch={addRecentSearch}
+						onClearRecentSearches={clearRecentSearches}
 					/>
 				)}
 

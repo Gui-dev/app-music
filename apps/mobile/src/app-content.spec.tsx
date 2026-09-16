@@ -5,12 +5,20 @@ import * as usePlayer from './hooks/use-player'
 import * as usePlaylistMutations from './hooks/mutations/use-playlist-mutations'
 import * as useMusics from './hooks/queries/use-musics'
 import * as usePlaylists from './hooks/queries/use-playlists'
+import * as useRecentSearches from './hooks/use-recent-searches'
 
 vi.mock('./hooks/queries/use-musics')
 vi.mock('./hooks/queries/use-playlists')
 vi.mock('./hooks/mutations/use-playlist-mutations')
 vi.mock('./hooks/use-player')
 vi.mock('./audio/audio-player')
+vi.mock('./hooks/use-recent-searches', () => ({
+	useRecentSearches: vi.fn(() => ({
+		recentSearches: [],
+		addRecentSearch: vi.fn(),
+		clearRecentSearches: vi.fn(),
+	})),
+}))
 
 const mockMusics = [
 	{
@@ -109,6 +117,11 @@ describe('AppContent', () => {
 			setPlaylist: vi.fn(),
 			setOnFinished: vi.fn(),
 		} as unknown as ReturnType<typeof usePlayer.usePlayer>)
+		vi.mocked(useRecentSearches.useRecentSearches).mockReturnValue({
+			recentSearches: [],
+			addRecentSearch: vi.fn(),
+			clearRecentSearches: vi.fn(),
+		} as unknown as ReturnType<typeof useRecentSearches.useRecentSearches>)
 	})
 
 	it('renders Player screen by default', () => {
