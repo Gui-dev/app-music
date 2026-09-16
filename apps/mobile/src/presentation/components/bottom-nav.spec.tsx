@@ -17,7 +17,14 @@ describe('BottomNav', () => {
 		expect(getByText('Search')).toBeTruthy()
 		expect(getByText('Biblioteca')).toBeTruthy()
 		expect(getByText('Playlists')).toBeTruthy()
-		expect(getByText('Equalizador')).toBeTruthy()
+	})
+
+	it('hides Equalizer tab on non-Android', () => {
+		const { queryByText } = render(
+			<BottomNav screen="Player" setScreen={setScreen} />,
+		)
+
+		expect(queryByText('Equalizador')).toBeNull()
 	})
 
 	it('shows solid icon for active Player tab', () => {
@@ -50,14 +57,6 @@ describe('BottomNav', () => {
 		)
 
 		expect(getByTestId('icon-library')).toBeTruthy()
-	})
-
-	it('shows solid icon for active Equalizer tab', () => {
-		const { getByTestId } = render(
-			<BottomNav screen="Equalizer" setScreen={setScreen} />,
-		)
-
-		expect(getByTestId('icon-options')).toBeTruthy()
 	})
 
 	it('shows solid icon for active Playlists tab', () => {
@@ -106,7 +105,7 @@ describe('BottomNav', () => {
 		const labels = container.querySelectorAll(
 			'[class*="text-text-secondary"][class*="text-xs"]',
 		)
-		expect(labels.length).toBe(4)
+		expect(labels.length).toBe(3)
 	})
 
 	it('calls setScreen with Player when Player tab pressed', () => {
@@ -134,15 +133,6 @@ describe('BottomNav', () => {
 
 		fireEvent.click(getByText('Biblioteca'))
 		expect(setScreen).toHaveBeenCalledWith('Biblioteca')
-	})
-
-	it('calls setScreen with Equalizer when Equalizer tab pressed', () => {
-		const { getByText } = render(
-			<BottomNav screen="Player" setScreen={setScreen} />,
-		)
-
-		fireEvent.click(getByText('Equalizador'))
-		expect(setScreen).toHaveBeenCalledWith('Equalizer')
 	})
 
 	it('calls setScreen with Playlists when Playlists tab pressed', () => {
@@ -175,7 +165,7 @@ describe('BottomNav', () => {
 		)
 
 		const tabs = container.querySelectorAll('[class*="items-center"]')
-		expect(tabs.length).toBe(5)
+		expect(tabs.length).toBe(4)
 	})
 
 	it('applies mt-1 and text-xs to tab labels', () => {
@@ -186,6 +176,6 @@ describe('BottomNav', () => {
 		const labels = container.querySelectorAll(
 			'[class*="mt-1"][class*="text-xs"]',
 		)
-		expect(labels.length).toBe(5)
+		expect(labels.length).toBe(4)
 	})
 })

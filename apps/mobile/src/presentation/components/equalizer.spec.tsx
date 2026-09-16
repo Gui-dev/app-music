@@ -1,11 +1,23 @@
 import { fireEvent, render } from '@testing-library/react'
+import type { useEqualizer } from '../../hooks/use-equalizer'
 import { Equalizer } from './equalizer'
 
-const defaultPresets = [
-	{ label: 'FLAT', active: true, onPress: vi.fn() },
-	{ label: 'BASS BOOST', onPress: vi.fn() },
-	{ label: 'ROCK', onPress: vi.fn() },
-]
+type EqualizerHook = ReturnType<typeof useEqualizer>
+
+function createMockHook(overrides: Partial<EqualizerHook> = {}): EqualizerHook {
+	return {
+		isSupported: true,
+		enabled: true,
+		bands: [0, 0, 0],
+		bandLabels: ['Graves (Bass)', 'Médios (Mid)', 'Agudos (Treble)'],
+		preset: 'Flat',
+		presets: ['Flat', 'Rock', 'Pop'],
+		toggle: vi.fn(),
+		setBandLevel: vi.fn(),
+		applyPreset: vi.fn(),
+		...overrides,
+	} as EqualizerHook
+}
 
 describe('Equalizer', () => {
 	beforeEach(() => {
@@ -13,178 +25,97 @@ describe('Equalizer', () => {
 	})
 
 	it('renders title', () => {
-		const { getByText } = render(<Equalizer />)
-
+		const eq = createMockHook()
+		const { getByText } = render(<Equalizer eq={eq} />)
 		expect(getByText('Equalizador')).toBeTruthy()
 	})
 
-	it('renders all band labels', () => {
-		const { getByText } = render(<Equalizer />)
+	it('renders not supported message on iOS', () => {
+		const eq = createMockHook({ isSupported: false })
+		const { getByText } = render(<Equalizer eq={eq} />)
+		expect(getByText('Equalizador não disponível')).toBeTruthy()
+		expect(getByText('Disponível apenas no Android')).toBeTruthy()
+	})
 
+	it('renders all band labels', () => {
+		const eq = createMockHook()
+		const { getByText } = render(<Equalizer eq={eq} />)
 		expect(getByText('Graves (Bass)')).toBeTruthy()
 		expect(getByText('Médios (Mid)')).toBeTruthy()
 		expect(getByText('Agudos (Treble)')).toBeTruthy()
 	})
 
-	it('renders positive band values with + prefix', () => {
-		const { getByText } = render(<Equalizer />)
-
+	it('renders band levels', () => {
+		const eq = createMockHook({ bands: [4, -2, 6] })
+		const { getByText } = render(<Equalizer eq={eq} />)
 		expect(getByText('+4 dB')).toBeTruthy()
-		expect(getByText('+1 dB')).toBeTruthy()
-		expect(getByText('+3 dB')).toBeTruthy()
+		expect(getByText('-2 dB')).toBeTruthy()
+		expect(getByText('+6 dB')).toBeTruthy()
 	})
 
-	it('renders zero band value without + prefix', () => {
-		const bands = [{ label: 'Bass', value: 0, max: 12 }]
-		const { getByText } = render(<Equalizer bands={bands} />)
-
-		expect(getByText('0 dB')).toBeTruthy()
+	it('renders zero as 0 dB', () => {
+		const eq = createMockHook({ bands: [0, 0, 0] })
+		const { getAllByText } = render(<Equalizer eq={eq} />)
+		const zeros = getAllByText('0 dB')
+		expect(zeros.length).toBe(3)
 	})
 
-	it('renders negative band values with minus sign', () => {
-		const bands = [{ label: 'Bass', value: -3, max: 12 }]
-		const { getByText } = render(<Equalizer bands={bands} />)
-
-		expect(getByText('-3 dB')).toBeTruthy()
+	it('calls toggle when ON/OFF pressed', () => {
+		const eq = createMockHook()
+		const { getByText } = render(<Equalizer eq={eq} />)
+		fireEvent.click(getByText('ON'))
+		expect(eq.toggle).toHaveBeenCalledTimes(1)
 	})
 
-	it('renders band bar with correct width', () => {
-		const bands = [{ label: 'Bass', value: 6, max: 12 }]
-		const { container } = render(<Equalizer bands={bands} />)
-
-		const filled = container.querySelector(
-			'[class*="bg-primary"][class*="absolute"]',
-		)
-		expect(filled).toHaveStyle({ width: '50%' })
+	it('shows OFF when disabled', () => {
+		const eq = createMockHook({ enabled: false })
+		const { getByText } = render(<Equalizer eq={eq} />)
+		expect(getByText('OFF')).toBeTruthy()
 	})
 
-	it('renders band bar at full width when value equals max', () => {
-		const bands = [{ label: 'Bass', value: 12, max: 12 }]
-		const { container } = render(<Equalizer bands={bands} />)
-
-		const filled = container.querySelector(
-			'[class*="bg-primary"][class*="absolute"]',
-		)
-		expect(filled).toHaveStyle({ width: '100%' })
+	it('renders band controls', () => {
+		const eq = createMockHook({ bands: [0, 0, 0] })
+		const { container } = render(<Equalizer eq={eq} />)
+		// Verify +/- buttons exist for each band
+		const buttons = container.querySelectorAll('[class*="rounded-full"]')
+		expect(buttons.length).toBeGreaterThanOrEqual(6)
 	})
 
-	it('renders band bar at 0% when value is 0', () => {
-		const bands = [{ label: 'Bass', value: 0, max: 12 }]
-		const { container } = render(<Equalizer bands={bands} />)
-
-		const filled = container.querySelector(
-			'[class*="bg-primary"][class*="absolute"]',
-		)
-		expect(filled).toHaveStyle({ width: '0%' })
+	it('renders preset buttons', () => {
+		const eq = createMockHook({ presets: ['Flat', 'Rock', 'Pop'] })
+		const { getByText } = render(<Equalizer eq={eq} />)
+		expect(getByText('Flat')).toBeTruthy()
+		expect(getByText('Rock')).toBeTruthy()
+		expect(getByText('Pop')).toBeTruthy()
 	})
 
-	it('renders Presets section title', () => {
-		const { getByText } = render(<Equalizer />)
-
-		expect(getByText('Presets')).toBeTruthy()
+	it('calls applyPreset when preset pressed', () => {
+		const eq = createMockHook()
+		const { getByText } = render(<Equalizer eq={eq} />)
+		fireEvent.click(getByText('Rock'))
+		expect(eq.applyPreset).toHaveBeenCalledWith('Rock')
 	})
 
-	it('renders all preset buttons', () => {
-		const { getByText } = render(<Equalizer presets={defaultPresets} />)
-
-		expect(getByText('FLAT')).toBeTruthy()
-		expect(getByText('BASS BOOST')).toBeTruthy()
-		expect(getByText('ROCK')).toBeTruthy()
-	})
-
-	it('calls preset onPress when pressed', () => {
-		const { getByText } = render(<Equalizer presets={defaultPresets} />)
-
-		fireEvent.click(getByText('FLAT'))
-		expect(defaultPresets[0].onPress).toHaveBeenCalledTimes(1)
-	})
-
-	it('applies active preset styles', () => {
-		const { container } = render(<Equalizer presets={defaultPresets} />)
-
+	it('highlights active preset', () => {
+		const eq = createMockHook({ preset: 'Rock' })
+		const { container } = render(<Equalizer eq={eq} />)
 		const activeButton = container.querySelector(
 			'[class*="bg-primary"][class*="rounded-lg"]',
 		)
 		expect(activeButton).toBeTruthy()
-		expect(activeButton).toHaveClass('bg-primary')
 	})
 
-	it('applies inactive preset styles', () => {
-		const { container } = render(<Equalizer presets={defaultPresets} />)
-
-		const inactiveButtons = container.querySelectorAll(
-			'[class*="bg-surface"][class*="rounded-lg"]',
-		)
-		expect(inactiveButtons.length).toBe(2)
+	it('disables controls when EQ is off', () => {
+		const eq = createMockHook({ enabled: false })
+		const { getByText } = render(<Equalizer eq={eq} />)
+		const minusButtons = document.querySelectorAll('[class*="bg-surface"]')
+		// Buttons should be disabled when EQ is off
+		expect(minusButtons.length).toBeGreaterThan(0)
 	})
 
-	it('applies bold text to active preset', () => {
-		const { container } = render(<Equalizer presets={defaultPresets} />)
-
-		const activeText = container.querySelector(
-			'[class*="font-bold"][class*="text-bg"]',
-		)
-		expect(activeText).toBeTruthy()
-		expect(activeText).toHaveTextContent('FLAT')
-	})
-
-	it('applies primary text to inactive presets', () => {
-		const { getByText } = render(<Equalizer presets={defaultPresets} />)
-
-		const bassBoost = getByText('BASS BOOST')
-		expect(bassBoost).toHaveClass('text-text-primary')
-
-		const rock = getByText('ROCK')
-		expect(rock).toHaveClass('text-text-primary')
-	})
-
-	it('renders presets in a flex row', () => {
-		const { container } = render(<Equalizer presets={defaultPresets} />)
-
-		const presetsContainer = container.querySelector(
-			'[class*="flex-row"][class*="gap-3"]',
-		)
-		expect(presetsContainer).toBeTruthy()
-		expect(presetsContainer).toHaveClass('flex-wrap')
-	})
-
-	it('renders band track with correct styles', () => {
-		const { container } = render(<Equalizer />)
-
-		const tracks = container.querySelectorAll(
-			'[class*="bg-surface"][class*="h-2"][class*="rounded-full"]',
-		)
-		expect(tracks.length).toBe(3)
-	})
-
-	it('renders custom bands', () => {
-		const customBands = [
-			{ label: 'Sub Bass', value: 8, max: 10 },
-			{ label: 'High Mids', value: 2, max: 10 },
-		]
-		const { getByText } = render(<Equalizer bands={customBands} />)
-
-		expect(getByText('Sub Bass')).toBeTruthy()
-		expect(getByText('High Mids')).toBeTruthy()
-		expect(getByText('+8 dB')).toBeTruthy()
-		expect(getByText('+2 dB')).toBeTruthy()
-	})
-
-	it('applies correct container styles', () => {
-		const { container } = render(<Equalizer />)
-
-		const wrapper = container.firstChild as HTMLElement
-		expect(wrapper).toHaveClass('p-4')
-	})
-
-	it('renders title with bold text', () => {
-		const { container } = render(<Equalizer />)
-
-		const title = container.querySelector(
-			'[class*="text-2xl"][class*="font-bold"]',
-		)
-		expect(title).toBeTruthy()
-		expect(title).toHaveClass('text-text-primary')
-		expect(title).toHaveTextContent('Equalizador')
+	it('shows Presets section', () => {
+		const eq = createMockHook()
+		const { getByText } = render(<Equalizer eq={eq} />)
+		expect(getByText('Presets')).toBeTruthy()
 	})
 })

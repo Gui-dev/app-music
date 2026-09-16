@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Platform, Text, TouchableOpacity, View } from 'react-native'
 
 type Screen = 'Player' | 'Search' | 'Biblioteca' | 'Equalizer' | 'Playlists'
 
@@ -9,6 +9,8 @@ interface BottomNavProps {
 }
 
 export function BottomNav({ screen, setScreen }: BottomNavProps) {
+	const showEqualizer = Platform.OS === 'android'
+
 	return (
 		<View className="flex-row justify-around border-t border-border px-4 pb-4 pt-3">
 			<TouchableOpacity
@@ -71,21 +73,23 @@ export function BottomNav({ screen, setScreen }: BottomNavProps) {
 					Playlists
 				</Text>
 			</TouchableOpacity>
-			<TouchableOpacity
-				onPress={() => setScreen('Equalizer')}
-				className="items-center"
-			>
-				<Ionicons
-					name={(screen === 'Equalizer' ? 'options' : 'options-outline') as any}
-					size={24}
-					color={screen === 'Equalizer' ? '#FACC16' : '#404047'}
-				/>
-				<Text
-					className={`mt-1 text-xs ${screen === 'Equalizer' ? 'text-primary' : 'text-text-secondary'}`}
+			{showEqualizer && (
+				<TouchableOpacity
+					onPress={() => setScreen('Equalizer')}
+					className="items-center"
 				>
-					Equalizador
-				</Text>
-			</TouchableOpacity>
+					<Ionicons
+						name={(screen === 'Equalizer' ? 'options' : 'options-outline') as any}
+						size={24}
+						color={screen === 'Equalizer' ? '#FACC16' : '#404047'}
+					/>
+					<Text
+						className={`mt-1 text-xs ${screen === 'Equalizer' ? 'text-primary' : 'text-text-secondary'}`}
+					>
+						Equalizador
+					</Text>
+				</TouchableOpacity>
+			)}
 		</View>
 	)
 }
