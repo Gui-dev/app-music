@@ -11,7 +11,11 @@ export function useRecentSearches() {
 	useEffect(() => {
 		AsyncStorage.getItem(STORAGE_KEY).then((raw) => {
 			if (raw) {
-				setRecentSearches(JSON.parse(raw))
+				try {
+					setRecentSearches(JSON.parse(raw))
+				} catch {
+					AsyncStorage.removeItem(STORAGE_KEY)
+				}
 			}
 		})
 	}, [])
