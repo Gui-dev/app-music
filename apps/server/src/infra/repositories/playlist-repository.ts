@@ -132,12 +132,16 @@ export class PlaylistRepository implements IPlaylistRepository {
 		row: typeof playlists.$inferSelect,
 		musicIds: string[],
 	): Playlist {
+		const parseDate = (value: string | null): Date => {
+			if (!value) return new Date()
+			return new Date(value.replace(' ', 'T'))
+		}
 		return {
 			id: row.id,
 			name: row.name,
 			musicIds,
-			createdAt: row.createdAt ? new Date(row.createdAt) : new Date(),
-			updatedAt: row.updatedAt ? new Date(row.updatedAt) : new Date(),
+			createdAt: parseDate(row.createdAt),
+			updatedAt: parseDate(row.updatedAt),
 		}
 	}
 }
