@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons'
 import { FlatList, RefreshControl, Text, View } from 'react-native'
 import { AlbumCard } from '../presentation/components/album-card'
 import type { Music } from '../infra/api/music-api'
@@ -5,6 +6,7 @@ import type { Music } from '../infra/api/music-api'
 interface BibliotecaScreenProps {
 	musicList: Music[]
 	albumGroups: [string, Music[]][]
+	musicsError: Error | null
 	musicsLoading: boolean
 	musicsRefetching: boolean
 	refetchMusics: () => void
@@ -17,6 +19,7 @@ interface BibliotecaScreenProps {
 export function BibliotecaScreen({
 	musicList,
 	albumGroups,
+	musicsError,
 	musicsLoading,
 	musicsRefetching,
 	refetchMusics,
@@ -32,12 +35,30 @@ export function BibliotecaScreen({
 					<Text className="text-2xl font-bold text-text-primary">
 						Biblioteca
 					</Text>
-					<Text className="text-sm text-text-secondary">
-						{musicList.length} faixas • {albumGroups.length} álbuns
-					</Text>
+					{!musicsError && (
+						<Text className="text-sm text-text-secondary">
+							{musicList.length} faixas • {albumGroups.length} álbuns
+						</Text>
+					)}
 				</View>
 			</View>
-			{musicsLoading ? (
+			{musicsError ? (
+				<View className="mx-4 flex-1 items-center justify-center rounded-lg bg-red-900/20 p-6">
+					<Ionicons name="alert-circle" size={40} color="#EF4444" />
+					<Text className="mt-3 text-center text-base text-red-400">
+						Falha ao carregar biblioteca
+					</Text>
+					<Text className="mt-1 text-center text-sm text-text-secondary">
+						{musicsError.message || 'Erro desconhecido'}
+					</Text>
+					<Text
+						onPress={refetchMusics}
+						className="mt-4 font-semibold text-primary"
+					>
+						Tentar novamente
+					</Text>
+				</View>
+			) : musicsLoading ? (
 				<View className="flex-1 items-center justify-center">
 					<Text className="text-text-secondary">Loading...</Text>
 				</View>

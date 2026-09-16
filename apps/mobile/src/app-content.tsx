@@ -147,6 +147,7 @@ export function AppContent() {
 					<BibliotecaScreen
 						musicList={musicList}
 						albumGroups={albumGroups}
+						musicsError={musicsError}
 						musicsLoading={musicsLoading}
 						musicsRefetching={musicsRefetching}
 						refetchMusics={refetchMusics}
