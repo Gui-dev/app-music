@@ -9,6 +9,7 @@ import { CreatePlaylist } from '@/domain/usecases/playlist/create-playlist'
 import { ListPlaylists } from '@/domain/usecases/playlist/list-playlists'
 import { RemoveMusicFromPlaylist } from '@/domain/usecases/playlist/remove-music-from-playlist'
 import { ListMusics } from '@/domain/usecases/music/list-musics'
+import { ScanMusicLibrary } from '@/domain/usecases/music/scan-music-library'
 import { SearchMusics } from '@/domain/usecases/music/search-musics'
 import { StreamMusic } from '@/domain/usecases/music/stream-music'
 import type { Container } from '@/infra/container'
@@ -41,6 +42,7 @@ export function createTestApp() {
 		listMusics: new ListMusics(musicRepository),
 		searchMusics: new SearchMusics(musicRepository),
 		streamMusic: new StreamMusic(musicRepository, null as any),
+		scanMusicLibrary: new ScanMusicLibrary(null as any, musicRepository as any),
 		createPlaylist: new CreatePlaylist(playlistRepository),
 		listPlaylists: new ListPlaylists(playlistRepository),
 		addMusicToPlaylist: new AddMusicToPlaylist(

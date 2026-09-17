@@ -1,4 +1,5 @@
 import { ListMusics } from '@/domain/usecases/music/list-musics'
+import { ScanMusicLibrary } from '@/domain/usecases/music/scan-music-library'
 import { SearchMusics } from '@/domain/usecases/music/search-musics'
 import { StreamMusic } from '@/domain/usecases/music/stream-music'
 import { AddMusicToPlaylist } from '@/domain/usecases/playlist/add-music-to-playlist'
@@ -24,6 +25,7 @@ export interface Container {
 	listMusics: ListMusics
 	streamMusic: StreamMusic
 	searchMusics: SearchMusics
+	scanMusicLibrary: ScanMusicLibrary
 	createPlaylist: CreatePlaylist
 	listPlaylists: ListPlaylists
 	addMusicToPlaylist: AddMusicToPlaylist
@@ -46,6 +48,7 @@ export function createContainer(): Container {
 	const listMusics = new ListMusics(musicRepository)
 	const streamMusic = new StreamMusic(musicRepository, fileStorage)
 	const searchMusics = new SearchMusics(musicRepository)
+	const scanMusicLibrary = new ScanMusicLibrary(scannerService, musicRepository)
 	const createPlaylist = new CreatePlaylist(playlistRepository)
 	const listPlaylists = new ListPlaylists(playlistRepository)
 	const addMusicToPlaylist = new AddMusicToPlaylist(
@@ -67,6 +70,7 @@ export function createContainer(): Container {
 		listMusics,
 		streamMusic,
 		searchMusics,
+		scanMusicLibrary,
 		createPlaylist,
 		listPlaylists,
 		addMusicToPlaylist,
