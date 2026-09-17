@@ -1,9 +1,6 @@
 import type { IMusicRepository } from '@/domain/contracts/repositories/i-music-repository'
 import type { IScannerService } from '@/domain/contracts/services/i-scanner-service'
-
-export interface ScanMusicLibraryInput {
-	path?: string
-}
+import { DomainError } from '@/domain/errors/domain-error'
 
 export interface ScanMusicLibraryOutput {
 	count: number
@@ -16,8 +13,16 @@ export class ScanMusicLibrary {
 		private readonly musicRepository: IMusicRepository,
 	) {}
 
-	async execute(input: ScanMusicLibraryInput): Promise<ScanMusicLibraryOutput> {
-		const scanPath = input.path || process.env.MUSIC_PATH || '/music'
+	async execute(): Promise<ScanMusicLibraryOutput> {
+		const scanPath = process.env.MUSIC_PATH
+
+		if (!scanPath) {
+			throw new DomainError(
+				'MUSIC_PATH_NOT_CONFIGURED',
+				'MUSIC_PATH environment variable is not configured',
+				500,
+			)
+		}
 
 		const musics = await this.scannerService.scanDirectory(scanPath)
 		await this.musicRepository.saveMany(musics)

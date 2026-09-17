@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { Music } from '@/domain/entities'
 import { InMemoryMusicRepository } from '@/infra/repositories/in-memory/in-memory-music-repository'
 import { ScanMusicLibrary } from './scan-music-library'
@@ -19,7 +19,12 @@ function createTestMusic(overrides: Partial<Music> = {}): Music {
 }
 
 describe('ScanMusicLibrary', () => {
+	afterEach(() => {
+		delete process.env.MUSIC_PATH
+	})
+
 	it('should scan directory and save musics to repository', async () => {
+		process.env.MUSIC_PATH = '/music'
 		const repo = new InMemoryMusicRepository()
 		const mockScanner = {
 			scanDirectory: vi.fn().mockResolvedValue([
@@ -29,7 +34,7 @@ describe('ScanMusicLibrary', () => {
 		}
 		const useCase = new ScanMusicLibrary(mockScanner, repo)
 
-		const result = await useCase.execute({ path: '/music' })
+		const result = await useCase.execute()
 
 		expect(mockScanner.scanDirectory).toHaveBeenCalledWith('/music')
 		expect(result.count).toBe(2)
@@ -39,57 +44,55 @@ describe('ScanMusicLibrary', () => {
 		expect(saved).toHaveLength(2)
 	})
 
-	it('should use default path when none provided', async () => {
-		const repo = new InMemoryMusicRepository()
-		const mockScanner = {
-			scanDirectory: vi.fn().mockResolvedValue([]),
-		}
-		const useCase = new ScanMusicLibrary(mockScanner, repo)
-
-		await useCase.execute({})
-
-		expect(mockScanner.scanDirectory).toHaveBeenCalledWith('/music')
-	})
-
-	it('should use MUSIC_PATH env var when no path provided', async () => {
-		const original = process.env.MUSIC_PATH
+	it('should use MUSIC_PATH env var', async () => {
 		process.env.MUSIC_PATH = '/custom/path'
-
 		const repo = new InMemoryMusicRepository()
 		const mockScanner = {
 			scanDirectory: vi.fn().mockResolvedValue([]),
 		}
 		const useCase = new ScanMusicLibrary(mockScanner, repo)
 
-		await useCase.execute({})
+		await useCase.execute()
 
 		expect(mockScanner.scanDirectory).toHaveBeenCalledWith('/custom/path')
+	})
 
-		process.env.MUSIC_PATH = original
+	it('should throw when MUSIC_PATH is not configured', async () => {
+		delete process.env.MUSIC_PATH
+		const repo = new InMemoryMusicRepository()
+		const mockScanner = {
+			scanDirectory: vi.fn(),
+		}
+		const useCase = new ScanMusicLibrary(mockScanner, repo)
+
+		await expect(useCase.execute()).rejects.toThrow(
+			'MUSIC_PATH environment variable is not configured',
+		)
+		expect(mockScanner.scanDirectory).not.toHaveBeenCalled()
 	})
 
 	it('should return count 0 when no files found', async () => {
+		process.env.MUSIC_PATH = '/empty'
 		const repo = new InMemoryMusicRepository()
 		const mockScanner = {
 			scanDirectory: vi.fn().mockResolvedValue([]),
 		}
 		const useCase = new ScanMusicLibrary(mockScanner, repo)
 
-		const result = await useCase.execute({ path: '/empty' })
+		const result = await useCase.execute()
 
 		expect(result.count).toBe(0)
 		expect(result.message).toBe('Found 0 music files')
 	})
 
 	it('should propagate scanner errors', async () => {
+		process.env.MUSIC_PATH = '/noaccess'
 		const repo = new InMemoryMusicRepository()
 		const mockScanner = {
 			scanDirectory: vi.fn().mockRejectedValue(new Error('Permission denied')),
 		}
 		const useCase = new ScanMusicLibrary(mockScanner, repo)
 
-		await expect(useCase.execute({ path: '/noaccess' })).rejects.toThrow(
-			'Permission denied',
-		)
+		await expect(useCase.execute()).rejects.toThrow('Permission denied')
 	})
 })
