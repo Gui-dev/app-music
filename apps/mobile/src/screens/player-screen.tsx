@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native'
 import { CoverArt } from '../presentation/components/cover-art'
 import { PlayerControls } from '../presentation/components/player-controls'
+import { PlayerSkeleton } from '../presentation/components/player-skeleton'
 import { ProgressBar } from '../presentation/components/progress-bar'
 import type { Music } from '../infra/api/music-api'
 import type { usePlayer } from '../hooks/use-player'
@@ -41,6 +42,10 @@ export function PlayerScreen({
 				</Text>
 			</View>
 		)
+	}
+
+	if (player.isLoading) {
+		return <PlayerSkeleton />
 	}
 
 	return (
