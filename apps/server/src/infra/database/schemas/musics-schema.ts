@@ -1,13 +1,17 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core'
 
-export const musics = sqliteTable('musics', {
-	id: text('id').primaryKey(),
-	title: text('title').notNull(),
-	artist: text('artist').notNull(),
-	album: text('album').notNull(),
-	duration: integer('duration'),
-	filePath: text('file_path').notNull(),
-	coverUrl: text('cover_url'),
-	trackNumber: integer('track_number'),
-	year: integer('year'),
-})
+export const musics = sqliteTable(
+	'musics',
+	{
+		id: text('id').primaryKey(),
+		title: text('title').notNull(),
+		artist: text('artist').notNull(),
+		album: text('album').notNull(),
+		duration: integer('duration'),
+		filePath: text('file_path').notNull(),
+		coverUrl: text('cover_url'),
+		trackNumber: integer('track_number'),
+		year: integer('year'),
+	},
+	(t) => [unique().on(t.filePath)],
+)

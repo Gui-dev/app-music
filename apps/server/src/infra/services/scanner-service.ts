@@ -1,4 +1,5 @@
 import { readdir } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
 import { extname, join } from 'node:path'
 import { parseFile } from 'music-metadata'
 import type { IScannerService } from '@/domain/contracts/services/i-scanner-service'
@@ -49,6 +50,10 @@ export class ScannerService implements IScannerService {
 		return AUDIO_EXTENSIONS.includes(ext)
 	}
 
+	private generateId(filePath: string): string {
+		return createHash('sha256').update(filePath).digest('hex').slice(0, 16)
+	}
+
 	private async parseAudioFile(filePath: string): Promise<Music | null> {
 		try {
 			console.log('Parsing:', filePath)
@@ -58,7 +63,7 @@ export class ScannerService implements IScannerService {
 			const format = metadata.format
 
 			return {
-				id: crypto.randomUUID(),
+				id: this.generateId(filePath),
 				title: common.title || 'Unknown Title',
 				artist: common.artist || 'Unknown Artist',
 				album: common.album || 'Unknown Album',
