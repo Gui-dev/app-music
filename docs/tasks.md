@@ -146,3 +146,28 @@
 - v Remove empty directories: domain/entities, domain/usecases, storage, navigation
 - v Integration tests for server routes (supertest)
 - x E2E tests with Detox (requires Android SDK)
+
+## Architecture Improvements
+
+> Principais melhorias, em ordem de prioridade:
+
+| Prioridade | Ponto | Melhoria |
+|------------|-------|----------|
+| **Alta** | Scan quebra a camada de aplicação | A rota chama scannerService e musicRepository diretamente. Crie `ScanMusicLibrary` como caso de uso, dependendo de `IScannerService` e `IMusicRepository`. Hoje a regra fica em `apps/server/src/infra/http/routes/scan-routes.ts:22`. |
+| **Alta** | Reescaneamento duplica músicas | O scanner cria `crypto.randomUUID()` a cada arquivo; `saveMany` só conflita por `id`, logo o mesmo arquivo entra novamente a cada scan. Use um ID determinístico derivado de `filePath` ou imponha unicidade no caminho. `apps/server/src/infra/services/scanner-service.ts:60`, `apps/server/src/infra/repositories/music-repository.ts:76`. |
+| **Alta** | Endpoint de scan aceita qualquer caminho | `POST /scan` permite que o cliente escolha `path`; isso pode expor leitura do filesystem do servidor. O caminho deveria ser configurado no servidor, ou validado como subdiretório de uma raiz permitida. `apps/server/src/infra/http/routes/scan-routes.ts:24`. |
+| **Média** | Rotas ignoram controllers existentes | `MusicController` e `PlaylistController` existem, mas as rotas chamam casos de uso diretamente e repetem serialização/erros. Escolha um padrão: remover controllers e manter rotas finas, ou fazê-las delegar a controllers. No estado atual há duplicação e código morto. `apps/server/src/infra/http/controllers/music-controller.ts:3`, `apps/server/src/infra/http/routes/playlist-routes.ts:5`. |
+| **Média** | Busca por ID ineficiente | `/music/:id` e `/cover/:id` carregam toda a biblioteca e filtram em memória. Crie `GetMusicById`, usando `IMusicRepository.findById`. `apps/server/src/infra/http/routes/music-routes.ts:42`, `apps/server/src/infra/http/routes/cover-routes.ts:17`. |
+| **Média** | Inversão de dependência incompleta | `CoverService` depende de `CoverCacheRepository` concreto, não de uma porta/contrato. Defina `ICoverCacheRepository` no domínio. `apps/server/src/infra/services/cover-service.ts:1`. |
+| **Média** | AppContent está virando "god component" | Ele concentra navegação, estado de player, playlist, busca, modal e transformação de dados. React Navigation já está instalado, mas a navegação é manual. Mover rotas para navigator e extrair um `usePlayerQueue`/estado de playlist reduz props e acoplamento. `apps/mobile/src/app-content.tsx:24`. |
+| **Baixa** | Contratos HTTP duplicados | Os schemas Zod compartilhados são usados no mobile, mas o servidor declara schemas equivalentes dentro das rotas. Reutilize os schemas de `shared` e crie schemas específicos de request/response quando necessário. `shared/src/schemas/index.ts:3`, `apps/server/src/infra/http/routes/music-routes.ts:11`. |
+| **Baixa** | Observabilidade e tratamento de erros | Há `console.log`, `console.error` e `catch (error: any)` espalhados. Centralize o mapeamento de `DomainError` no error handler e use o logger do Fastify; isso também elimina try/catch repetidos nas rotas. `apps/server/src/infra/http/middleware/error-handler.ts:3`. |
+
+> **Pontos positivos importantes:**
+>
+> - Casos de uso dependem de interfaces de repositório, o que torna os testes de domínio simples e independentes de SQLite.
+> - O composition root está bem identificado em container (`apps/server/src/infra/container/index.ts:33`).
+> - O mobile valida respostas HTTP na borda da aplicação com Zod, uma ótima proteção contra contratos inválidos. `apps/mobile/src/infra/api/music-api.ts:31`.
+> - React Query está corretamente centralizando cache e invalidação de mutações.
+
+> **Prioridade de execução sugerida:** Corrigir a identidade no scan, encapsular o scan em caso de uso, criar `GetMusicById`, e então decidir definitivamente entre "rotas finas" ou controllers. Isso deixaria a arquitetura muito mais consistente sem exigir uma reescrita.
