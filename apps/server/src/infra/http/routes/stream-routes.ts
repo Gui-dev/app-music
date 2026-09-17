@@ -26,15 +26,20 @@ export async function streamRoutes(app: FastifyInstance) {
 				})
 
 				const contentLength = result.end - result.start + 1
+				const isPartial = range !== undefined
 
-				reply.header(
-					'Content-Range',
-					`bytes ${result.start}-${result.end}/${result.totalSize}`,
-				)
 				reply.header('Accept-Ranges', 'bytes')
 				reply.header('Content-Length', contentLength)
 				reply.header('Content-Type', result.stream.contentType)
-				reply.header('Cache-Control', 'public, max-age=3600')
+				reply.header('Cache-Control', 'no-store')
+
+				if (isPartial) {
+					reply.status(206)
+					reply.header(
+						'Content-Range',
+						`bytes ${result.start}-${result.end}/${result.totalSize}`,
+					)
+				}
 
 				return reply.send(result.stream.stream as unknown as Readable)
 			} catch (error: any) {

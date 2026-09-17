@@ -28,7 +28,7 @@ class AudioPlayerService {
 
 		this.player = createPlayer(
 			{ uri },
-			{ updateInterval: 1000, preferredForwardBufferDuration: 30 },
+			{ updateInterval: 1000, preferredForwardBufferDuration: 60 },
 		)
 		this.addListener()
 	}
@@ -54,7 +54,7 @@ class AudioPlayerService {
 
 	async preloadNext(uri: string): Promise<void> {
 		try {
-			await preload(uri, { preferredForwardBufferDuration: 20 })
+			await preload(uri, { preferredForwardBufferDuration: 30 })
 		} catch {
 			// preload failure is non-critical
 		}
