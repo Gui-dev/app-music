@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import { PanResponder, Text, View } from 'react-native'
+import { useMemo, useRef } from 'react'
+import { LayoutChangeEvent, PanResponder, Text, View } from 'react-native'
 
 interface ProgressBarProps {
 	progress: number
@@ -14,6 +14,9 @@ export function ProgressBar({
 	duration,
 	onSeek,
 }: ProgressBarProps) {
+	const barWidth = useRef(300)
+	const startPercent = useRef(0.5)
+
 	const formatTime = (ms: number) => {
 		const totalSeconds = Math.floor(ms / 1000)
 		const minutes = Math.floor(totalSeconds / 60)
@@ -25,12 +28,18 @@ export function ProgressBar({
 		() =>
 			PanResponder.create({
 				onStartShouldSetPanResponder: () => true,
-				onPanResponderGrant: () => {},
+				onPanResponderGrant: (_, gesture) => {
+					const width = barWidth.current
+					const touchX = gesture.x0
+					startPercent.current = Math.max(0, Math.min(1, touchX / width))
+					onSeek(startPercent.current)
+				},
 				onPanResponderMove: (_, gesture) => {
-					const width = 300
+					const width = barWidth.current
+					const deltaPercent = gesture.dx / width
 					const seekPercent = Math.max(
 						0,
-						Math.min(1, (gesture.dx + width / 2) / width),
+						Math.min(1, startPercent.current + deltaPercent),
 					)
 					onSeek(seekPercent)
 				},
@@ -38,6 +47,10 @@ export function ProgressBar({
 			}),
 		[onSeek],
 	)
+
+	const handleLayout = (event: LayoutChangeEvent) => {
+		barWidth.current = event.nativeEvent.layout.width
+	}
 
 	return (
 		<View className="w-full px-4">
@@ -50,6 +63,7 @@ export function ProgressBar({
 				</Text>
 			</View>
 			<View
+				onLayout={handleLayout}
 				{...panResponder.panHandlers}
 				className="h-2 bg-surface rounded-full overflow-hidden relative"
 			>

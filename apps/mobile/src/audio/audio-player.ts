@@ -43,7 +43,8 @@ class AudioPlayerService {
 
 	async seek(positionMillis: number): Promise<void> {
 		if (!this.player) return
-		await this.player.seekTo(positionMillis / 1000)
+		const clamped = Math.max(0, Math.min(positionMillis, (this.player.duration ?? 0) * 1000))
+		await this.player.seekTo(clamped / 1000)
 	}
 
 	async setRate(rate: number): Promise<void> {
