@@ -153,7 +153,7 @@
 
 | Prioridade | Ponto | Melhoria |
 |------------|-------|----------|
-| **Alta** | Scan quebra a camada de aplicação | A rota chama scannerService e musicRepository diretamente. Crie `ScanMusicLibrary` como caso de uso, dependendo de `IScannerService` e `IMusicRepository`. Hoje a regra fica em `apps/server/src/infra/http/routes/scan-routes.ts:22`. |
+| **Alta** | Scan quebra a camada de aplicação | v Criado `ScanMusicLibrary` como caso de uso, dependendo de `IScannerService` e `IMusicRepository`. Rota agora delega ao caso de uso. `apps/server/src/domain/usecases/music/scan-music-library.ts`. |
 | **Alta** | Reescaneamento duplica músicas | O scanner cria `crypto.randomUUID()` a cada arquivo; `saveMany` só conflita por `id`, logo o mesmo arquivo entra novamente a cada scan. Use um ID determinístico derivado de `filePath` ou imponha unicidade no caminho. `apps/server/src/infra/services/scanner-service.ts:60`, `apps/server/src/infra/repositories/music-repository.ts:76`. |
 | **Alta** | Endpoint de scan aceita qualquer caminho | `POST /scan` permite que o cliente escolha `path`; isso pode expor leitura do filesystem do servidor. O caminho deveria ser configurado no servidor, ou validado como subdiretório de uma raiz permitida. `apps/server/src/infra/http/routes/scan-routes.ts:24`. |
 | **Média** | Rotas ignoram controllers existentes | `MusicController` e `PlaylistController` existem, mas as rotas chamam casos de uso diretamente e repetem serialização/erros. Escolha um padrão: remover controllers e manter rotas finas, ou fazê-las delegar a controllers. No estado atual há duplicação e código morto. `apps/server/src/infra/http/controllers/music-controller.ts:3`, `apps/server/src/infra/http/routes/playlist-routes.ts:5`. |
