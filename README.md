@@ -2,8 +2,12 @@
 
 Personal music streaming app. Stream your MP3 library from an external HD connected to your PC, accessible from anywhere via mobile.
 
-![Library](docs/screens/library.jpg)
-![Player](docs/screens/player.jpg)
+<table>
+  <tr>
+    <td align="center"><img src="docs/screens/library.jpg" width="250" /><br /><sub>Biblioteca</sub></td>
+    <td align="center"><img src="docs/screens/player.jpg" width="250" /><br /><sub>Player</sub></td>
+  </tr>
+</table>
 
 ## Architecture
 
@@ -86,8 +90,12 @@ Scan the QR code with Expo Go (Android) or Camera (iOS).
 
 ## Features
 
-![Search](docs/screens/search.jpg)
-![Playlist](docs/screens/playlist.jpg)
+<table>
+  <tr>
+    <td align="center"><img src="docs/screens/search.jpg" width="250" /><br /><sub>Busca</sub></td>
+    <td align="center"><img src="docs/screens/playlist.jpg" width="250" /><br /><sub>Playlist</sub></td>
+  </tr>
+</table>
 
 - **Music library** — browse all tracks grouped by album
 - **Streaming** — stream MP3s with 30s forward buffer and prefetch
