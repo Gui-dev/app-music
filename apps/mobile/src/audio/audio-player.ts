@@ -28,7 +28,7 @@ class AudioPlayerService {
 
 		this.player = createPlayer(
 			{ uri },
-			{ updateInterval: 1000, preferredForwardBufferDuration: 60 },
+			{ updateInterval: 1000, preferredForwardBufferDuration: 60, downloadFirst: true },
 		)
 		this.addListener()
 	}
