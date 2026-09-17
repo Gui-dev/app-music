@@ -32,6 +32,7 @@
 		"react-dom": "19.2.3",
 		"react-native": "0.86.3",
 		"react-native-css-interop": "^0.2.6",
+		"react-native-modern-shimmer": "^1.1.8",
 		"react-native-safe-area-context": "~5.7.0",
 		"react-native-screens": "~4.26.0",
 		"tailwindcss": "3",
