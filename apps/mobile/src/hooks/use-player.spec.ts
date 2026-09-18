@@ -12,6 +12,8 @@ vi.mock('../audio/audio-player', () => ({
 		seek: vi.fn().mockResolvedValue(undefined),
 		setRate: vi.fn().mockResolvedValue(undefined),
 		unload: vi.fn().mockResolvedValue(undefined),
+		setLockScreenMetadata: vi.fn(),
+		clearLockScreen: vi.fn(),
 		onPlaybackStatusUpdate: vi.fn(),
 		onFinished: vi.fn(),
 		onError: vi.fn(),

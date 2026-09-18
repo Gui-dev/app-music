@@ -2,6 +2,7 @@ import {
 	clearPreloadedSource,
 	createAudioPlayer as createPlayer,
 	preload,
+	setAudioModeAsync,
 	type AudioPlayer,
 } from 'expo-audio'
 
@@ -31,6 +32,11 @@ class AudioPlayerService {
 			{ updateInterval: 1000, preferredForwardBufferDuration: 30 },
 		)
 		this.addListener()
+
+		await setAudioModeAsync({
+			shouldPlayInBackground: true,
+			interruptionModeAndroid: 'doNotMix',
+		})
 	}
 
 	async play(): Promise<void> {
@@ -83,10 +89,25 @@ class AudioPlayerService {
 	async unload(): Promise<void> {
 		this.removeListener()
 		if (this.player) {
+			this.player.setActiveForLockScreen(false)
 			this.player.pause()
 			this.player.remove()
 			this.player = null
 		}
+	}
+
+	setLockScreenMetadata(metadata: {
+		title: string
+		artist: string
+		albumTitle: string
+	}): void {
+		if (!this.player) return
+		this.player.setActiveForLockScreen(true, metadata)
+	}
+
+	clearLockScreen(): void {
+		if (!this.player) return
+		this.player.setActiveForLockScreen(false)
 	}
 
 	private addListener(): void {

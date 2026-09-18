@@ -82,6 +82,11 @@ export function usePlayer(playlist?: Music[]) {
 			try {
 				const uri = musicApi.getStreamUrl(music.id)
 				await audioPlayer.load(uri)
+				audioPlayer.setLockScreenMetadata({
+					title: music.title,
+					artist: music.artist,
+					albumTitle: music.album,
+				})
 				await audioPlayer.play()
 				prefetchNext(music)
 			} catch (error) {
