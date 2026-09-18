@@ -13,6 +13,8 @@ import { ScanMusicLibrary } from '@/domain/usecases/music/scan-music-library'
 import { SearchMusics } from '@/domain/usecases/music/search-musics'
 import { StreamMusic } from '@/domain/usecases/music/stream-music'
 import type { Container } from '@/infra/container'
+import { MusicController } from '../../controllers/music-controller'
+import { PlaylistController } from '../../controllers/playlist-controller'
 import { InMemoryMusicRepository } from '@/infra/repositories/in-memory/in-memory-music-repository'
 import { InMemoryPlaylistRepository } from '@/infra/repositories/in-memory/in-memory-playlist-repository'
 import { errorHandler } from '../../middleware/error-handler'
@@ -31,6 +33,28 @@ export function createTestApp() {
 	const musicRepository = new InMemoryMusicRepository()
 	const playlistRepository = new InMemoryPlaylistRepository()
 
+	const listMusics = new ListMusics(musicRepository)
+	const searchMusics = new SearchMusics(musicRepository)
+	const createPlaylist = new CreatePlaylist(playlistRepository)
+	const listPlaylists = new ListPlaylists(playlistRepository)
+	const addMusicToPlaylist = new AddMusicToPlaylist(
+		playlistRepository,
+		musicRepository,
+	)
+	const removeMusicFromPlaylist = new RemoveMusicFromPlaylist(playlistRepository)
+
+	const musicController = new MusicController(
+		listMusics,
+		searchMusics,
+		musicRepository,
+	)
+	const playlistController = new PlaylistController(
+		listPlaylists,
+		createPlaylist,
+		addMusicToPlaylist,
+		removeMusicFromPlaylist,
+	)
+
 	const container: Container = {
 		db: null as any,
 		musicRepository: musicRepository as any,
@@ -39,17 +63,16 @@ export function createTestApp() {
 		fileStorage: null as any,
 		coverService: null as any,
 		scannerService: null as any,
-		listMusics: new ListMusics(musicRepository),
-		searchMusics: new SearchMusics(musicRepository),
+		listMusics,
+		searchMusics,
 		streamMusic: new StreamMusic(musicRepository, null as any),
 		scanMusicLibrary: new ScanMusicLibrary(null as any, musicRepository as any),
-		createPlaylist: new CreatePlaylist(playlistRepository),
-		listPlaylists: new ListPlaylists(playlistRepository),
-		addMusicToPlaylist: new AddMusicToPlaylist(
-			playlistRepository,
-			musicRepository,
-		),
-		removeMusicFromPlaylist: new RemoveMusicFromPlaylist(playlistRepository),
+		createPlaylist,
+		listPlaylists,
+		addMusicToPlaylist,
+		removeMusicFromPlaylist,
+		musicController,
+		playlistController,
 	}
 
 	app.decorate('container', container)

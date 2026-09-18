@@ -23,12 +23,7 @@ export async function playlistRoutes(app: FastifyInstance) {
 			},
 		},
 		async () => {
-			const playlists = await app.container.listPlaylists.execute()
-			return playlists.map((p) => ({
-				...p,
-				createdAt: p.createdAt.toISOString(),
-				updatedAt: p.updatedAt.toISOString(),
-			}))
+			return app.container.playlistController.list()
 		},
 	)
 
@@ -45,13 +40,9 @@ export async function playlistRoutes(app: FastifyInstance) {
 			const { name } = request.body as { name: string }
 
 			try {
-				const playlist = await app.container.createPlaylist.execute({ name })
+				const playlist = await app.container.playlistController.create(name)
 				reply.code(201)
-				return {
-					...playlist,
-					createdAt: playlist.createdAt.toISOString(),
-					updatedAt: playlist.updatedAt.toISOString(),
-				}
+				return playlist
 			} catch (error: any) {
 				if (error.code === 'DUPLICATE_NAME') {
 					return reply.status(409).send({ error: error.message })
@@ -78,11 +69,7 @@ export async function playlistRoutes(app: FastifyInstance) {
 			const { musicId } = request.body as { musicId: string }
 
 			try {
-				await app.container.addMusicToPlaylist.execute({
-					playlistId: id,
-					musicId,
-				})
-				return { success: true }
+				return await app.container.playlistController.addMusic(id, musicId)
 			} catch (error: any) {
 				if (error.statusCode === 404) {
 					return reply.status(404).send({ error: error.message })
@@ -109,11 +96,7 @@ export async function playlistRoutes(app: FastifyInstance) {
 			const { id, musicId } = request.params as { id: string; musicId: string }
 
 			try {
-				await app.container.removeMusicFromPlaylist.execute({
-					playlistId: id,
-					musicId,
-				})
-				return { success: true }
+				return await app.container.playlistController.removeMusic(id, musicId)
 			} catch (error: any) {
 				if (error.statusCode === 404) {
 					return reply.status(404).send({ error: error.message })

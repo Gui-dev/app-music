@@ -1,24 +1,27 @@
-import type { Container } from '@/infra/container'
+import type { IMusicRepository } from '@/domain/contracts/repositories/i-music-repository'
+import type { SearchMusics } from '@/domain/usecases/music/search-musics'
+import type { ListMusics } from '@/domain/usecases/music/list-musics'
 
 export class MusicController {
-	constructor(private container: Container) {}
+	constructor(
+		private readonly listMusics: ListMusics,
+		private readonly searchMusics: SearchMusics,
+		private readonly musicRepository: IMusicRepository,
+	) {}
 
-	async listMusics() {
-		const musics = await this.container.listMusics.execute()
-		return musics
+	async list() {
+		return this.listMusics.execute()
 	}
 
-	async getMusicById(id: string) {
-		const musics = await this.container.listMusics.execute()
-		const found = musics.find((m) => m.id === id)
-		if (!found) {
-			throw new Error('Music not found')
+	async getById(id: string) {
+		const music = await this.musicRepository.findById(id)
+		if (!music) {
+			return null
 		}
-		return found
+		return music
 	}
 
-	async searchMusics(query: string) {
-		const musics = await this.container.searchMusics.execute(query)
-		return musics
+	async search(query: string) {
+		return this.searchMusics.execute(query)
 	}
 }

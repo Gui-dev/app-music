@@ -7,6 +7,8 @@ import { CreatePlaylist } from '@/domain/usecases/playlist/create-playlist'
 import { ListPlaylists } from '@/domain/usecases/playlist/list-playlists'
 import { RemoveMusicFromPlaylist } from '@/domain/usecases/playlist/remove-music-from-playlist'
 import { type AppDatabase, createDatabase } from '../database/database'
+import { MusicController } from '../http/controllers/music-controller'
+import { PlaylistController } from '../http/controllers/playlist-controller'
 import { CoverCacheRepository } from '../repositories/cover-cache-repository'
 import { MusicRepository } from '../repositories/music-repository'
 import { PlaylistRepository } from '../repositories/playlist-repository'
@@ -30,6 +32,8 @@ export interface Container {
 	listPlaylists: ListPlaylists
 	addMusicToPlaylist: AddMusicToPlaylist
 	removeMusicFromPlaylist: RemoveMusicFromPlaylist
+	musicController: MusicController
+	playlistController: PlaylistController
 }
 
 export function createContainer(): Container {
@@ -59,6 +63,18 @@ export function createContainer(): Container {
 		playlistRepository,
 	)
 
+	const musicController = new MusicController(
+		listMusics,
+		searchMusics,
+		musicRepository,
+	)
+	const playlistController = new PlaylistController(
+		listPlaylists,
+		createPlaylist,
+		addMusicToPlaylist,
+		removeMusicFromPlaylist,
+	)
+
 	return {
 		db,
 		musicRepository,
@@ -75,5 +91,7 @@ export function createContainer(): Container {
 		listPlaylists,
 		addMusicToPlaylist,
 		removeMusicFromPlaylist,
+		musicController,
+		playlistController,
 	}
 }
