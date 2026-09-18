@@ -11,6 +11,10 @@ coverage/
 *.apk
 *.aab
 
+# Expo prebuild (generated native projects)
+android/
+ios/
+
 # SQLite
 data/
 *.db

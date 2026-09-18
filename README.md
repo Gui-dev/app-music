@@ -19,7 +19,18 @@ Monorepo with hexagonal architecture — backend Fastify + React Native (Expo) m
 app-music/
 ├── apps/
 │   ├── server/          # Fastify backend
+│   │   ├── src/
+│   │   │   ├── domain/        # Use cases, entities, contracts
+│   │   │   ├── infra/         # Repositories, services, routes, controllers
+│   │   │   ├── schemas/       # Centralized Zod schemas
+│   │   │   └── server.ts
+│   │   └── ...
 │   └── mobile/          # React Native app (Expo)
+│       └── src/
+│           ├── hooks/         # usePlayer, usePlayerQueue, queries, mutations
+│           ├── screens/       # Player, Search, Biblioteca, Playlists
+│           ├── audio/         # AudioPlayerService (expo-audio)
+│           └── ...
 ├── shared/              # Zod schemas (frontend ↔ backend)
 ├── docs/
 │   └── screens/         # App screenshots
@@ -27,6 +38,14 @@ app-music/
 ├── lefthook.yml         # Git hooks
 └── pnpm-workspace.yaml
 ```
+
+### Design Principles
+
+- **Hexagonal architecture** — domain depends on nothing, infrastructure implements interfaces
+- **Use cases** — `ScanMusicLibrary`, `GetMusicById`, `StreamMusic`, etc.
+- **Controllers** — thin layer mapping use case results to HTTP responses
+- **Centralized schemas** — `apps/server/src/schemas/` as single source of truth
+- **Centralized error handling** — `DomainError` mapped to HTTP status codes automatically
 
 ## Tech Stack
 
@@ -39,6 +58,7 @@ app-music/
 | **Validation** | Zod (shared schemas) |
 | **State** | TanStack Query v5 |
 | **Testing** | Vitest, React Testing Library |
+| **Hooks** | Lefthook (pre-commit, pre-push) |
 
 ## Getting Started
 
@@ -97,21 +117,24 @@ Scan the QR code with Expo Go (Android) or Camera (iOS).
   </tr>
 </table>
 
-- **Music library** — browse all tracks grouped by album
-- **Streaming** — stream MP3s with 30s forward buffer and prefetch
+- **Music library** — browse all tracks grouped by album with pull-to-refresh
+- **Streaming** — stream MP3s with 30s forward buffer, prefetch, and Range request support
 - **Search** — real-time search with recent search history
-- **Playlists** — create, edit, add/remove songs
+- **Playlists** — create, add/remove songs, playlist-aware playback
 - **Equalizer** — native Android equalizer with 5 presets
-- **Cover art** — album art fetched from backend with local cache
+- **Cover art** — album art fetched from Last.fm with local cache
 - **Auto-advance** — playlist-aware next/prev with infinite scroll
+- **Background audio** — playback continues when app is in background
+- **Lock screen controls** — media metadata on Android lock screen
+- **Buffering indicator** — visual feedback during stream loading
 
 ## Testing
 
 ```bash
-# Backend
+# Backend (95 tests)
 cd apps/server && pnpm test
 
-# Mobile
+# Mobile (202 tests)
 cd apps/mobile && pnpm test
 
 # All
