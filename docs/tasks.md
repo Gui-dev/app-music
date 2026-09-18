@@ -164,7 +164,7 @@
 | v | Rotas ignoram controllers existentes | Rotas delegam a `MusicController` e `PlaylistController` |
 | v | Busca por ID ineficiente | `GetMusicById` com `findById` direto no repositório |
 | v | Inversão de dependência incompleta | `ICoverCacheRepository` criado. `CoverService` depende da interface, `CoverCacheRepository` implementa |
-| - | AppContent "god component" | Mover navegação para React Navigation, extrair `usePlayerQueue` |
+| v | AppContent "god component" | Extraído `usePlayerQueue` (queue + navegação) e `usePlaylistPicker` (modal). AppContent virou orquestrador fino |
 
 ### Baixa
 
