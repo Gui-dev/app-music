@@ -1,8 +1,9 @@
 import { and, eq } from 'drizzle-orm'
+import type { ICoverCacheRepository } from '@/domain/contracts/repositories/i-cover-cache-repository'
 import type { AppDatabase } from '../database/database'
 import { coverCache } from '../database/schemas'
 
-export class CoverCacheRepository {
+export class CoverCacheRepository implements ICoverCacheRepository {
 	constructor(private readonly db: AppDatabase) {}
 
 	async findByArtistAlbum(

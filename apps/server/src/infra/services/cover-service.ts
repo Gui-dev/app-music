@@ -1,12 +1,12 @@
+import type { ICoverCacheRepository } from '@/domain/contracts/repositories/i-cover-cache-repository'
 import type { ICoverService } from '@/domain/contracts/services/i-cover-service'
-import type { CoverCacheRepository } from '../repositories/cover-cache-repository'
 
 const LASTFM_API_URL = 'https://ws.audioscrobbler.com/2.0/'
 
 export class CoverService implements ICoverService {
 	constructor(
 		private readonly apiKey: string,
-		private readonly cacheRepository: CoverCacheRepository,
+		private readonly cacheRepository: ICoverCacheRepository,
 	) {}
 
 	async getCover(artist: string, album: string): Promise<string | null> {
