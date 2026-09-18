@@ -7,7 +7,20 @@
     "userInterfaceStyle": "dark",
     "entryPoint": "./App.tsx",
     "android": {
-      "package": "com.anonymous.appmusicmobile"
-    }
+      "package": "com.anonymous.appmusicmobile",
+      "permissions": [
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "android.permission.WAKE_LOCK"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-audio",
+        {
+          "enableBackgroundPlayback": true
+        }
+      ]
+    ]
   }
 }
