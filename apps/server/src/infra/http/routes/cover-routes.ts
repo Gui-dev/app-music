@@ -1,6 +1,6 @@
 import type { ZodTypeProvider } from '@fastify/type-provider-zod'
 import type { FastifyInstance } from 'fastify'
-import { z } from 'zod'
+import { MusicIdParamSchema } from '../../../schemas'
 
 export async function coverRoutes(app: FastifyInstance) {
 	const server = app.withTypeProvider<ZodTypeProvider>()
@@ -9,9 +9,7 @@ export async function coverRoutes(app: FastifyInstance) {
 		'/cover/:id',
 		{
 			schema: {
-				params: z.object({
-					id: z.string(),
-				}),
+				params: MusicIdParamSchema,
 			},
 		},
 		async (request, reply) => {

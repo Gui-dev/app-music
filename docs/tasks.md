@@ -170,7 +170,7 @@
 
 | Status | Problema | Solução |
 |--------|----------|---------|
-| - | Contratos HTTP duplicados | Reutilizar schemas de `shared/` no servidor |
+| v | Contratos HTTP duplicados | Criado `apps/server/src/schemas/index.ts` como única fonte de schemas Zod. Rotas importam de lá |
 | - | Observabilidade e tratamento de erros | Centralizar `DomainError` no error handler, usar logger do Fastify |
 
 > **Status:** v = concluído | - = pendente

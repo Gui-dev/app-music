@@ -1,6 +1,13 @@
 import type { ZodTypeProvider } from '@fastify/type-provider-zod'
 import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
+import {
+	AddMusicToPlaylistBodySchema,
+	CreatePlaylistSchema,
+	IdParamSchema,
+	PlaylistSchema,
+	RemoveMusicFromPlaylistParamsSchema,
+} from '../../../schemas'
 
 export async function playlistRoutes(app: FastifyInstance) {
 	const server = app.withTypeProvider<ZodTypeProvider>()
@@ -10,15 +17,7 @@ export async function playlistRoutes(app: FastifyInstance) {
 		{
 			schema: {
 				response: {
-					200: z.array(
-						z.object({
-							id: z.string(),
-							name: z.string(),
-							musicIds: z.array(z.string()),
-							createdAt: z.string(),
-							updatedAt: z.string(),
-						}),
-					),
+					200: z.array(PlaylistSchema),
 				},
 			},
 		},
@@ -31,9 +30,7 @@ export async function playlistRoutes(app: FastifyInstance) {
 		'/playlists',
 		{
 			schema: {
-				body: z.object({
-					name: z.string(),
-				}),
+				body: CreatePlaylistSchema,
 			},
 		},
 		async (request, reply) => {
@@ -56,12 +53,8 @@ export async function playlistRoutes(app: FastifyInstance) {
 		'/playlists/:id/add',
 		{
 			schema: {
-				params: z.object({
-					id: z.string(),
-				}),
-				body: z.object({
-					musicId: z.string(),
-				}),
+				params: IdParamSchema,
+				body: AddMusicToPlaylistBodySchema,
 			},
 		},
 		async (request, reply) => {
@@ -86,10 +79,7 @@ export async function playlistRoutes(app: FastifyInstance) {
 		'/playlists/:id/remove/:musicId',
 		{
 			schema: {
-				params: z.object({
-					id: z.string(),
-					musicId: z.string(),
-				}),
+				params: RemoveMusicFromPlaylistParamsSchema,
 			},
 		},
 		async (request, reply) => {

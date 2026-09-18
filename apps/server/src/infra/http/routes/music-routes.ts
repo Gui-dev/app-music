@@ -1,6 +1,7 @@
 import type { ZodTypeProvider } from '@fastify/type-provider-zod'
 import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
+import { MusicIdParamSchema, MusicSchema } from '../../../schemas'
 
 export async function musicRoutes(app: FastifyInstance) {
 	const server = app.withTypeProvider<ZodTypeProvider>()
@@ -10,18 +11,7 @@ export async function musicRoutes(app: FastifyInstance) {
 		{
 			schema: {
 				response: {
-					200: z.array(
-						z.object({
-							id: z.string(),
-							title: z.string(),
-							artist: z.string(),
-							album: z.string(),
-							duration: z.number().nullable(),
-							coverUrl: z.string().nullable(),
-							trackNumber: z.number().nullable(),
-							year: z.number().nullable(),
-						}),
-					),
+					200: z.array(MusicSchema),
 				},
 			},
 		},
@@ -34,9 +24,7 @@ export async function musicRoutes(app: FastifyInstance) {
 		'/music/:id',
 		{
 			schema: {
-				params: z.object({
-					id: z.string(),
-				}),
+				params: MusicIdParamSchema,
 			},
 		},
 		async (request, reply) => {

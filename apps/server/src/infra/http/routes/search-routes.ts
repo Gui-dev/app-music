@@ -1,6 +1,7 @@
 import type { ZodTypeProvider } from '@fastify/type-provider-zod'
 import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
+import { MusicSchema, SearchQuerySchema } from '../../../schemas'
 
 export async function searchRoutes(app: FastifyInstance) {
 	const server = app.withTypeProvider<ZodTypeProvider>()
@@ -9,22 +10,9 @@ export async function searchRoutes(app: FastifyInstance) {
 		'/search',
 		{
 			schema: {
-				querystring: z.object({
-					q: z.string(),
-				}),
+				querystring: SearchQuerySchema,
 				response: {
-					200: z.array(
-						z.object({
-							id: z.string(),
-							title: z.string(),
-							artist: z.string(),
-							album: z.string(),
-							duration: z.number().nullable(),
-							coverUrl: z.string().nullable(),
-							trackNumber: z.number().nullable(),
-							year: z.number().nullable(),
-						}),
-					),
+					200: z.array(MusicSchema),
 				},
 			},
 		},
