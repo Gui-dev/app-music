@@ -5,26 +5,20 @@ import { parseFile } from 'music-metadata'
 import type { IScannerService } from '@/domain/contracts/services/i-scanner-service'
 import type { Music } from '@/domain/entities'
 
-console.log('ScannerService loaded, music-metadata:', typeof parseFile)
-
 const AUDIO_EXTENSIONS = ['.mp3', '.flac', '.wav', '.m4a', '.ogg', '.aac']
 
 export class ScannerService implements IScannerService {
 	async scanDirectory(rootPath: string): Promise<Music[]> {
-		console.log('scanDirectory called with:', rootPath)
 		const musics: Music[] = []
 		await this.scanRecursive(rootPath, musics)
-		console.log('scanDirectory done, found:', musics.length)
 		return musics
 	}
 
 	private async scanRecursive(dirPath: string, musics: Music[]): Promise<void> {
-		console.log('scanRecursive:', dirPath)
 		let entries
 		try {
 			entries = await readdir(dirPath, { withFileTypes: true })
-		} catch (error: any) {
-			console.error('readdir error:', dirPath, error.message)
+		} catch {
 			return
 		}
 
@@ -56,9 +50,7 @@ export class ScannerService implements IScannerService {
 
 	private async parseAudioFile(filePath: string): Promise<Music | null> {
 		try {
-			console.log('Parsing:', filePath)
 			const metadata = await parseFile(filePath)
-			console.log('Parsed:', metadata.common.title)
 			const common = metadata.common
 			const format = metadata.format
 
@@ -73,8 +65,7 @@ export class ScannerService implements IScannerService {
 				trackNumber: common.track?.no || null,
 				year: common.year || null,
 			}
-		} catch (error: any) {
-			console.error('parseFile error:', error.message, error.stack)
+		} catch {
 			return null
 		}
 	}

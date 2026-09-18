@@ -35,17 +35,9 @@ export async function playlistRoutes(app: FastifyInstance) {
 		},
 		async (request, reply) => {
 			const { name } = request.body as { name: string }
-
-			try {
-				const playlist = await app.container.playlistController.create(name)
-				reply.code(201)
-				return playlist
-			} catch (error: any) {
-				if (error.code === 'DUPLICATE_NAME') {
-					return reply.status(409).send({ error: error.message })
-				}
-				throw error
-			}
+			const playlist = await app.container.playlistController.create(name)
+			reply.code(201)
+			return playlist
 		},
 	)
 
@@ -57,21 +49,10 @@ export async function playlistRoutes(app: FastifyInstance) {
 				body: AddMusicToPlaylistBodySchema,
 			},
 		},
-		async (request, reply) => {
+		async (request) => {
 			const { id } = request.params as { id: string }
 			const { musicId } = request.body as { musicId: string }
-
-			try {
-				return await app.container.playlistController.addMusic(id, musicId)
-			} catch (error: any) {
-				if (error.statusCode === 404) {
-					return reply.status(404).send({ error: error.message })
-				}
-				if (error.code === 'MUSIC_ALREADY_IN_PLAYLIST') {
-					return reply.status(409).send({ error: error.message })
-				}
-				throw error
-			}
+			return app.container.playlistController.addMusic(id, musicId)
 		},
 	)
 
@@ -82,20 +63,9 @@ export async function playlistRoutes(app: FastifyInstance) {
 				params: RemoveMusicFromPlaylistParamsSchema,
 			},
 		},
-		async (request, reply) => {
+		async (request) => {
 			const { id, musicId } = request.params as { id: string; musicId: string }
-
-			try {
-				return await app.container.playlistController.removeMusic(id, musicId)
-			} catch (error: any) {
-				if (error.statusCode === 404) {
-					return reply.status(404).send({ error: error.message })
-				}
-				if (error.code === 'MUSIC_NOT_IN_PLAYLIST') {
-					return reply.status(400).send({ error: error.message })
-				}
-				throw error
-			}
+			return app.container.playlistController.removeMusic(id, musicId)
 		},
 	)
 }

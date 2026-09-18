@@ -30,6 +30,7 @@ export class AddMusicToPlaylist {
 			throw new DomainError(
 				'MUSIC_ALREADY_IN_PLAYLIST',
 				'Music is already in this playlist',
+				409,
 			)
 		}
 

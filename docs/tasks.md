@@ -171,7 +171,7 @@
 | Status | Problema | Solução |
 |--------|----------|---------|
 | v | Contratos HTTP duplicados | Criado `apps/server/src/schemas/index.ts` como única fonte de schemas Zod. Rotas importam de lá |
-| - | Observabilidade e tratamento de erros | Centralizar `DomainError` no error handler, usar logger do Fastify |
+| v | Observabilidade e tratamento de erros | Error handler mapeia `DomainError` automaticamente. Rotas sem try/catch. `request.log` em vez de `console.log`. Status codes nos use cases |
 
 > **Status:** v = concluído | - = pendente
 

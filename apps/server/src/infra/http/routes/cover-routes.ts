@@ -12,28 +12,20 @@ export async function coverRoutes(app: FastifyInstance) {
 				params: MusicIdParamSchema,
 			},
 		},
-		async (request, reply) => {
+		async (request) => {
 			const { id } = request.params as { id: string }
+			const music = await app.container.getMusicById.execute(id)
 
-			try {
-				const music = await app.container.getMusicById.execute(id)
-
-				if (music.coverUrl) {
-					return { coverUrl: music.coverUrl }
-				}
-
-				const coverUrl = await app.container.coverService.getCover(
-					music.artist,
-					music.album,
-				)
-
-				return { coverUrl }
-			} catch (error: any) {
-				if (error.statusCode === 404) {
-					return reply.status(404).send({ error: error.message })
-				}
-				throw error
+			if (music.coverUrl) {
+				return { coverUrl: music.coverUrl }
 			}
+
+			const coverUrl = await app.container.coverService.getCover(
+				music.artist,
+				music.album,
+			)
+
+			return { coverUrl }
 		},
 	)
 }

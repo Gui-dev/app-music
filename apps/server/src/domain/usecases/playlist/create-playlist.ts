@@ -20,6 +20,7 @@ export class CreatePlaylist {
 			throw new DomainError(
 				'DUPLICATE_NAME',
 				'A playlist with this name already exists',
+				409,
 			)
 		}
 

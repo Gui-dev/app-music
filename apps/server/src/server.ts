@@ -27,10 +27,6 @@ app.register(cors, {
 app.setErrorHandler(errorHandler)
 
 const container = createContainer()
-console.log(
-	'Container created, scannerService:',
-	typeof container.scannerService,
-)
 app.decorate('container', container)
 
 const server = app.withTypeProvider<ZodTypeProvider>()
@@ -51,7 +47,7 @@ const PORT = Number(process.env.PORT) || 3000
 const start = async () => {
 	try {
 		await server.listen({ port: PORT, host: '0.0.0.0' })
-		console.log(`Server running on http://localhost:${PORT}`)
+		server.log.info(`Server running on http://localhost:${PORT}`)
 	} catch (err) {
 		server.log.error(err)
 		process.exit(1)
