@@ -8,6 +8,7 @@ import { AddMusicToPlaylist } from '@/domain/usecases/playlist/add-music-to-play
 import { CreatePlaylist } from '@/domain/usecases/playlist/create-playlist'
 import { ListPlaylists } from '@/domain/usecases/playlist/list-playlists'
 import { RemoveMusicFromPlaylist } from '@/domain/usecases/playlist/remove-music-from-playlist'
+import { GetMusicById } from '@/domain/usecases/music/get-music-by-id'
 import { ListMusics } from '@/domain/usecases/music/list-musics'
 import { ScanMusicLibrary } from '@/domain/usecases/music/scan-music-library'
 import { SearchMusics } from '@/domain/usecases/music/search-musics'
@@ -35,6 +36,7 @@ export function createTestApp() {
 
 	const listMusics = new ListMusics(musicRepository)
 	const searchMusics = new SearchMusics(musicRepository)
+	const getMusicById = new GetMusicById(musicRepository)
 	const createPlaylist = new CreatePlaylist(playlistRepository)
 	const listPlaylists = new ListPlaylists(playlistRepository)
 	const addMusicToPlaylist = new AddMusicToPlaylist(
@@ -67,6 +69,7 @@ export function createTestApp() {
 		searchMusics,
 		streamMusic: new StreamMusic(musicRepository, null as any),
 		scanMusicLibrary: new ScanMusicLibrary(null as any, musicRepository as any),
+		getMusicById,
 		createPlaylist,
 		listPlaylists,
 		addMusicToPlaylist,
